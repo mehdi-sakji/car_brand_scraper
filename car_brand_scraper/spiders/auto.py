@@ -1,6 +1,7 @@
 import scrapy
 import json
 import pandas
+import re
 import pdb
 
 
@@ -27,27 +28,19 @@ class AutoSpider(scrapy.Spider):
 
         base_url = "http://www.auto-auctions.com.au/search_results.aspx?sitekey=AAV&make=All%20Makes&model=All%20Models&keyword=&fromyear%20=From%20Any&toyear=To%20Any&body=All%20Body%20Types"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            #base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
+
+    
+    def parse_all_pages_urls(self, response):
+        """ Extracts URLs of all pages. """
+
+        pagination_text = response.css(".ss-page")[0].css("option::text").extract_first()
+        max_pagination = int(pagination_text.split(" ")[-1])
+        for page in range(max_pagination):
+            page_url = "https://audisearch.com.au/listing?page={}".format(str(page))
             yield scrapy.Request(
-                url = base_url, callback = self.parse_all_cars_within_page)
-
-
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
+                url = page_url, callback = self.parse_all_cars_within_page)
 
 
     def parse_all_cars_within_page(self, response):

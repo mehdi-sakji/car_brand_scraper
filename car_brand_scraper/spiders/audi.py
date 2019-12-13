@@ -28,27 +28,23 @@ class AudiSpider(scrapy.Spider):
 
         base_url = "https://audisearch.com.au/listing"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            base_url = "https://audisearch.com.au/listing?page={}".format(str(current_pagination))
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
+
+
+    def parse_all_pages_urls(self, response):
+        """ Extracts URLs of all pages. """
+        
+        self.models = response.css("#refine-search")[0].css(".form-group")[2].css(
+            ".select-container")[0].css("option::text").extract()[1:]
+        ss_page = response.css(".ss-page")[0]
+        pagination_text = ss_page.css("option::text").extract_first()
+        max_pagination = int(pagination_text.split(" ")[-1])
+        #for current_pagination in range(max_pagination):
+        for current_pagination in range(2):
+            base_url = "https://audisearch.com.au/listing?page={}".format(str(current_pagination+1))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
-
-
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
 
 
     def parse_all_cars_within_page(self, response):
@@ -57,24 +53,24 @@ class AudiSpider(scrapy.Spider):
         cars_blocks = response.css(".car-list")
         cars_urls = [
             car_block.css("a::attr(href)").extract_first() for car_block in cars_blocks]
-        #for url in cars_urls:
-        #    yield scrapy.Request(
-        #        url = url, callback = self.parse_car, meta={"url": url})
-        url = "https://audisearch.com.au/details/497155/2015-audi-s3-sedan"
-        yield scrapy.Request(
-            url = url, callback = self.parse_car, meta={"url": url}) 
+        for url in cars_urls:
+            yield scrapy.Request(
+                url = url, callback = self.parse_car)
 
 
     def parse_car(self, response):
         """ Extracts one car's information. """
 
-        link = response.meta.get("url")
+        link = response.url
         title = response.css(".cl-heading")[1].css("h1::text").extract_first()
-        car_model, car_badge = self.parse_car_model_badge(title)
-        price = response.css(".car-price")[0].css(".overall-price")[0].css("span::text").extract_first()
         initial_details = {
-            "LINK": link, "MAKE": self.make, "MODEL": car_model, "BADGE": car_badge, "PRICE": price
-        }
+            "LINK": link, "MAKE": self.make}
+        car_model = [item for item in self.models if item in title]
+        if len(car_model)>=1:
+            initial_details["MODEL"] = car_model[0]
+        price = response.css(".car-price")[0].css(".overall-price")[0].css("span::text").extract_first()
+        if price is not None:
+            initial_details["PRICE"] = price
         vehicle_details_features_and_comments = response.css(".vehicle-details")[0]
         comments = vehicle_details_features_and_comments.xpath("./div")[1].xpath("./div")[0]
         comments_paragraphs = comments.css("p::text").extract()
@@ -123,12 +119,3 @@ class AudiSpider(scrapy.Spider):
         parsed_details_df.drop_duplicates(subset ="key", inplace = True)
         parsed_details_df["value"] =  parsed_details_df["value"].apply(lambda value: value.strip())
         return parsed_details_df
-
-
-    def parse_car_model_badge(self, title):
-        """ Recognizes car model and badge from its title. """
-
-        title_tokens = title.split(" ")
-        car_model = title_tokens[2]
-        car_badge = title_tokens[3]
-        return car_model, car_badge
