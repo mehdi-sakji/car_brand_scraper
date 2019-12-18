@@ -1,6 +1,5 @@
-FILE=./results/carnet.csv
+FILE=../results/carnet.csv
 if test -f "$FILE"; then
-    cp $FILE ./results/carnet.bkp.csv
-    rm -rf $FILE
+    mv $FILE ../results/carnet.bkp.csv
 fi
-scrapy crawl carnet -o ./results/carnet.csv -t csv
+scrapy crawl carnet -o ../results/carnet.csv -t csv

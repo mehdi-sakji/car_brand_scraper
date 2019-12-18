@@ -1,6 +1,7 @@
 import scrapy
 import json
 from selenium import webdriver
+from datetime import datetime
 import pandas
 
 
@@ -68,6 +69,7 @@ class BmwSpider(scrapy.Spider):
         title = response.css(".head-2::text").extract_first()
         price = response.css(".overall-price")[0].css("span::text").extract_first()
         initial_details = {
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())),
             "TITLE": title, "LINK": link, "MAKE": self.make, "PRICE": price}
         dealer_name = response.css(".dealer-details")[0].xpath("./p/b/text()").extract_first()
         if dealer_name is not None:

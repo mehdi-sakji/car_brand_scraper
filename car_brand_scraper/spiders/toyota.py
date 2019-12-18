@@ -2,6 +2,7 @@ import scrapy
 import json
 from selenium import webdriver
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -27,7 +28,8 @@ class ToyotaSpider(scrapy.Spider):
             "FUEL CONSUMPTION EXTRA URBAN": "FUEL ECONOMY (HIGHWAY)",
             "FUEL CONSUMPTION COMBINED": "FUEL ECONOMY (COMBINED)",
             "BODY STYLE": "BODY TYPE",
-            "P PLATE APPROVED": "P PLATE STATUS"}
+            "P PLATE APPROVED": "P PLATE STATUS",
+            "STEERING DESCRIPTION": "STEERING"}
 
 
     def start_requests(self):
@@ -69,7 +71,7 @@ class ToyotaSpider(scrapy.Spider):
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
         """
-        url = "https://www.toyota.com.au/used-cars/for-sale/449014"
+        url = "https://www.toyota.com.au/used-cars/for-sale/452054"
         yield scrapy.Request(
             url = url, callback = self.parse_car, meta={"url": url})
 
@@ -81,7 +83,7 @@ class ToyotaSpider(scrapy.Spider):
         title = response.css(".vehicle-name")[0].css("strong::text").extract_first()
         year = title.split(" ")[0]
         initial_details = {
-            "LINK": link, "MAKE": self.make, "YEAR": year}
+            "LINK": link, "MAKE": self.make, "YEAR": year, "TIMESTAMP": int(datetime.timestamp(datetime.now()))}
         odometer = response.css(".odometer-text::text").extract_first()
         initial_details["ODOMETER"] = odometer
         inline_info = response.css(".list-inline")[0]

@@ -2,6 +2,7 @@ import scrapy
 import json
 from selenium import webdriver
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -26,11 +27,12 @@ class AudiSpider(scrapy.Spider):
     def start_requests(self):
         """ Browse to the base url the scraper starts from. """
 
+    
         base_url = "https://audisearch.com.au/listing"
         self.init_data()
         yield scrapy.Request(
             url = base_url, callback = self.parse_all_pages_urls)
-
+    
 
     def parse_all_pages_urls(self, response):
         """ Extracts URLs of all pages. """
@@ -40,11 +42,15 @@ class AudiSpider(scrapy.Spider):
         ss_page = response.css(".ss-page")[0]
         pagination_text = ss_page.css("option::text").extract_first()
         max_pagination = int(pagination_text.split(" ")[-1])
-        #for current_pagination in range(max_pagination):
-        for current_pagination in range(2):
+        test_url = "https://audisearch.com.au/details/497155/2015-audi-s3-sedan"
+        yield scrapy.Request(
+            url = test_url, callback = self.parse_car)
+        """
+        for current_pagination in range(max_pagination):
             base_url = "https://audisearch.com.au/listing?page={}".format(str(current_pagination+1))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
+        """
 
 
     def parse_all_cars_within_page(self, response):
@@ -64,7 +70,7 @@ class AudiSpider(scrapy.Spider):
         link = response.url
         title = response.css(".cl-heading")[1].css("h1::text").extract_first()
         initial_details = {
-            "LINK": link, "MAKE": self.make}
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())) , "LINK": link, "MAKE": self.make, "TITLE": title}
         car_model = [item for item in self.models if item in title]
         if len(car_model)>=1:
             initial_details["MODEL"] = car_model[0]
@@ -117,5 +123,6 @@ class AudiSpider(scrapy.Spider):
         parsed_details_df["key"] = parsed_details_df["key"].apply(
             lambda key: self.details_mapping[key] if key in self.details_mapping.keys() else key)
         parsed_details_df.drop_duplicates(subset ="key", inplace = True)
-        parsed_details_df["value"] =  parsed_details_df["value"].apply(lambda value: value.strip())
+        parsed_details_df["value"] =  parsed_details_df["value"].apply(
+            lambda value: value.strip() if isinstance(value, str) else value)
         return parsed_details_df

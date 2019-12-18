@@ -1,6 +1,7 @@
 import scrapy
 import json
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -15,11 +16,12 @@ class CityMotorSpider(scrapy.Spider):
         """ Initiates global settings. """
 
         self.details_mapping = {
+            "ENGINE": "INDUCTION TYPE",
             "BUILD MONTH/YEAR": "YEAR",
             "COMPLIANCE PLATE MONTH/YEAR": "COMPLIANCE DATE",
             "VARIANT": "BADGE",
             "BODY": "BODY TYPE",
-            "ENGINE SIZE": "ENGINE SIZE (CC)",
+            "ENGINE SIZE": "ENGINE",
             "KILOMETRES": "ODOMETER",
             "COLOUR": "EXTERIOR COLOUR",
             "STOCK NUMBER": "STOCK NO"}
@@ -70,7 +72,7 @@ class CityMotorSpider(scrapy.Spider):
         """ Extracts one car's information. """
 
         link = response.meta.get("url")
-        initial_details = {"LINK": link}
+        initial_details = {"LINK": link, "TIMESTAMP": int(datetime.timestamp(datetime.now()))}
         initial_details["DEALER NAME"] = "City Motor Auction"
         initial_details["LOCATION"] = "720 Kingsford Smith Drive Eagle Farm QLD, 4009"
         features = response.css("#lblExtras::text").extract_first()

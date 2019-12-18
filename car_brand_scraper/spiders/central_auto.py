@@ -1,6 +1,7 @@
 import scrapy
 import json
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -75,7 +76,7 @@ class CentralAutoSpider(scrapy.Spider):
         link = response.meta.get("url")
         title = response.css(".post-title::text").extract_first()
         initial_details = {
-            "TITLE": title, "LINK": link}
+            "TITLE": title, "LINK": link, "TIMESTAMP": int(datetime.timestamp(datetime.now()))}
         initial_details["DEALER NAME"] = "Central Auto Auctions"
         initial_details["LOCATION"] = "Central Auto Auctions Pty Ltd Lic. MD 1006191 171 Fison Ave West Eagle Farm Qld 4009"
         features_block = response.css("#vehicle-add-features")[0]

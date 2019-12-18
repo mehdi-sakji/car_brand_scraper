@@ -1,6 +1,7 @@
 import scrapy
 import json
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -83,6 +84,7 @@ class ValleyMotorSpider(scrapy.Spider):
         rego_expiry = details_box.css("#lblRegExpiry::text").extract_first()
         stock_no = details_box.css("#lblMTA::text").extract_first()
         initial_details = {
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())),
             "TITLE": title, "LINK": link, "MAKE": make, "YEAR": year, "FUEL TYPE": fuel_type,
             "ANCAP RATING": rating, "BODY TYPE": body_type, "TRANSMISSION": transmission, "REGO": rego,
             "REGO EXPIRY": rego_expiry, "STOCK NO": stock_no}

@@ -2,6 +2,7 @@ import scrapy
 import json
 from selenium import webdriver
 import pandas
+from datetime import datetime
 import re
 
 
@@ -95,6 +96,7 @@ class SubaruSpider(scrapy.Spider):
             "\r\n", "").strip()
         price = re.sub(r'\s+', ' ', price)
         initial_details = {
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())),
             "TITLE": title, "LINK": link, "MAKE": self.make, "PRICE": price}
         dealer_info = response.css(".csnsl__dealer")[0].css("dd::text").extract()
         if len(dealer_info)>=2:

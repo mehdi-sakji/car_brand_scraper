@@ -3,6 +3,7 @@ import json
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -61,7 +62,7 @@ class HyundaiSpider(scrapy.Spider):
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
         """
-        url = "http://cars.hyundai.com.au/view.php/used_cars/2015_Hyundai_Accent_RB2_Active_Red_4_Speed_Sports_Automatic_Hatchback/20136420/"
+        url = "http://cars.hyundai.com.au/view.php/used_cars/Used_MY16_RB3_ACCENT_4_SEDAN_14P_ACTIVE_MAN/20125156/"
         yield scrapy.Request(
             url = url, callback = self.parse_car, meta={"url": url})
 
@@ -74,7 +75,8 @@ class HyundaiSpider(scrapy.Spider):
         year = title.split(" ")[0]
         car_model, car_badge = self.parse_car_model_badge(title)
         initial_details = {
-            "LINK": link, "MAKE": self.make, "MODEL": car_model, "BADGE": car_badge, "YEAR": year}
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())), "LINK": link, "MAKE": self.make,
+            "MODEL": car_model, "YEAR": year}
         car_panels = response.css(".cta-key-values")[0].css("h4 *::text").extract()
         if len(car_panels)>=6:
             engine = " ".join([car_panels[4], car_panels[5]])

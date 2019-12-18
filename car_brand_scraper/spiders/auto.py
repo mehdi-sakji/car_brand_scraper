@@ -2,6 +2,7 @@ import scrapy
 import json
 import pandas
 import re
+from datetime import datetime
 import pdb
 
 
@@ -35,9 +36,9 @@ class AutoSpider(scrapy.Spider):
     def parse_all_pages_urls(self, response):
         """ Extracts URLs of all pages. """
 
-        pagination_text = response.css(".ss-page")[0].css("option::text").extract_first()
-        max_pagination = int(pagination_text.split(" ")[-1])
-        for page in range(max_pagination):
+        #pagination_text = response.css(".ss-page")[0].css("option::text").extract_first()
+        #max_pagination = int(pagination_text.split(" ")[-1])
+        for page in range(1):
             page_url = "https://audisearch.com.au/listing?page={}".format(str(page))
             yield scrapy.Request(
                 url = page_url, callback = self.parse_all_cars_within_page)
@@ -46,9 +47,9 @@ class AutoSpider(scrapy.Spider):
     def parse_all_cars_within_page(self, response):
         """ Extracts all cars URLs within a page. """
 
-        car_blocks = response.css("table")[0].css("tbody")[0].css("tr")
-        cars_urls = [
-            "http://www.auto-auctions.com.au/" + car_block.css("td")[0].css("a::attr(href)").extract_first() for car_block in car_blocks]
+        #car_blocks = response.css("table")[0].css("tbody")[0].css("tr")
+        #cars_urls = [
+        #    "http://www.auto-auctions.com.au/" + car_block.css("td")[0].css("a::attr(href)").extract_first() for car_block in car_blocks]
         """
         for url in cars_urls:
             yield scrapy.Request(
@@ -80,6 +81,7 @@ class AutoSpider(scrapy.Spider):
         rego_expiry = details_box.css("#lblRegExpiry::text").extract_first()
         stock_no = details_box.css("#lblMTA::text").extract_first()
         initial_details = {
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())),
             "TITLE": title, "LINK": link, "MAKE": make, "MODEL": model, "YEAR": year, "FUEL TYPE": fuel_type,
             "BODY TYPE": body_type, "TRANSMISSION": transmission, "ODOMETER": odometer, "REGO": rego,
             "REGO EXPIRY": rego_expiry, "STOCK NO": stock_no, "DEALER NAME": "Auto Auctions Sydney",
@@ -88,11 +90,11 @@ class AutoSpider(scrapy.Spider):
         features = features_block.css("li::text").extract()
         if len(features)>=1:
             features = [item.strip() for item in features]
-            initial_details["VEHICLE FEATURES"] = "\n".join(features)
+            initial_details["VEHICLE FEATURES"] = ",".join(features)
         comments = response.css("#lblComments *::text").extract()
         if len(comments)>=1:
             comments = [item.strip() for item in comments]
-            initial_details["COMMENTS"] = "\n".join(comments)
+            initial_details["COMMENTS"] = " ".join(comments)
         details = response.css(".specifications")[0].css(".item")
         parsed_details_df = self.parse_details(details, initial_details)
         parsed_details_df = self.alter_details(parsed_details_df)

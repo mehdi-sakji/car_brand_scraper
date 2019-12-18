@@ -2,6 +2,7 @@ import scrapy
 import json
 from selenium import webdriver
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -72,6 +73,7 @@ class MercedesSpider(scrapy.Spider):
         price = response.css(".overall-price")[0].css("span::text").extract_first()
         fuel_economy = response.css(".feature-consumption *::text").extract_first()
         initial_details = {
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())),
             "TITLE": title, "LINK": link, "MAKE": self.make, "PRICE": price, "FUEL ECONOMY": fuel_economy}
         dealer_name = response.css(".right-sidebar")[0].xpath("./p/b/text()").extract_first()
         if dealer_name is not None:

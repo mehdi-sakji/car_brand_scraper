@@ -1,6 +1,7 @@
 import scrapy
 import json
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -75,7 +76,7 @@ class F3MotorSpider(scrapy.Spider):
         link = response.meta.get("url")
         title = response.css(".post-title::text").extract_first()
         initial_details = {
-            "TITLE": title, "LINK": link}
+            "TITLE": title, "LINK": link, "TIMESTAMP": int(datetime.timestamp(datetime.now()))}
         initial_details["DEALER NAME"] = "F3 Motor Auctions"
         initial_details["LOCATION"] = "F3 Motor Auctions Pty Ltd Lic. MD 39894 1a Yangan Drive Beresfield NSW 2322"
         features_block = response.css("#vehicle-add-features")[0]

@@ -1,6 +1,5 @@
-FILE=./results/bmw.csv
+FILE=../results/bmw.csv
 if test -f "$FILE"; then
-    cp $FILE ./results/bmw.bkp.csv
-    rm -rf $FILE
+    mv $FILE ../results/bmw.bkp.csv
 fi
-scrapy crawl bmw -o ./results/bmw.csv -t csv
+scrapy crawl bmw -o ../results/bmw.csv -t csv

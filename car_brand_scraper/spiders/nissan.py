@@ -1,6 +1,7 @@
 import scrapy
 import json
 from selenium import webdriver
+from datetime import datetime
 import pandas
 
 
@@ -59,7 +60,7 @@ class NissanSpider(scrapy.Spider):
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
         """
-        url = "https://pre-owned.nissan.com.au/details/2016-nissan-juke/OAG-AD-17399598"
+        url = "https://pre-owned.nissan.com.au/details/2016-nissan-juke/OAG-AD-18177267"
         yield scrapy.Request(
             url = url, callback = self.parse_car, meta={"url": url})
 
@@ -73,6 +74,7 @@ class NissanSpider(scrapy.Spider):
         year = title.split(" ")[0]
         price = response.css(".overall-price")[0].css("span::text").extract_first()
         initial_details = {
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())),
             "LINK": link, "MAKE": self.make, "YEAR": year, "PRICE": price, "BADGE": badge}
         dealer_info = response.css(".dealer-details").css("p *::text").extract()
         if len(dealer_info)>=3:

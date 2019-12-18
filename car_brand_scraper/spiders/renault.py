@@ -2,6 +2,7 @@ import scrapy
 import json
 from selenium import webdriver
 import pandas
+from datetime import datetime
 import pdb
 
 
@@ -23,20 +24,32 @@ class RenaultSpider(scrapy.Spider):
             "KMS": "ODOMETER", "REGISTRATION": "REGO", "DRIVE": "DRIVE TYPE", "BODY STYLE": "BODY TYPE",
             "SEAT CAPACITY": "SEATS", "REG PLATE": "REGO", "GENERIC GEAR TYPE": "TRANSMISSION",
             "FUEL CONSUMPTION COMBINED": "FUEL ECONOMY (COMBINED)", "ENGINE SIZE (L)": "ENGINE SIZE (CC)"}
+        self.models_badges = [
+            ("captur", ["dynamique", "intens", "s-edition", "zen"]),
+            ("clio", ["dynamique", "intens", "life", "r.s. 200 cup", "r.s. 200 sport", "zen"]),
+            ("kadjar", ["dynamique", "intens"]), 
+            ("kangoo", ["maxi", "maxi z.e"]),
+            ("koleos", ["bose", "formula edition", "intens", "life", "privilege", "zen"]),
+            ("master", []),
+            ("megane", ["gt", "gt-line", "r.s. 280", "r.s. cup", "zen"]),
+            ("trafic", ["103kw", "85kw", "crew lifestyle", "formula edition", "trader life"]),
+            ("zoe", ["intens"]),
+        ]
 
 
     def start_requests(self):
         """ Browse to the base url the scraper starts from. """
 
+    
         base_url = "http://approvedused.renault.com.au/search/all/all"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
+
+
+    def parse_all_pages_urls(self, response):
+        """ Browse to the base url the scraper starts from. """
+
         self.max_pagination = 1
         for current_pagination in range(self.max_pagination):
             base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
@@ -78,7 +91,8 @@ class RenaultSpider(scrapy.Spider):
         year = title.split(" ")[0]
         car_model, car_badge = self.parse_car_model_badge(title)
         initial_details = {
-            "LINK": link, "MAKE": self.make, "MODEL": car_model, "BADGE": car_badge, "YEAR": year}
+            "TIMESTAMP": int(datetime.timestamp(datetime.now())), "LINK": link,
+            "MAKE": self.make, "MODEL": car_model, "BADGE": car_badge, "YEAR": year}
         header_details = response.css(".feature-list").css("li")
         vehicle_details_and_comments = response.css(".tab-content")[0]
         comments = vehicle_details_and_comments.css("#tab1 *::text").extract()
@@ -120,13 +134,13 @@ class RenaultSpider(scrapy.Spider):
     def parse_car_model_badge(self, title):
         """ Recognizes car model and badge from its title. """
 
-        after_make = title.lower().split(self.make.lower())[-1].strip()
         car_model = None
         car_badge = None
-        self.models = [item.lower() for item in self.models]
-        for model in self.models:
-            if model in after_make:
-                car_model = model.upper()
-                car_badge = after_make.split(model)[-1].upper().strip()
+        for model_badges in self.models_badges:
+            if model_badges[0] in title.lower():
+                car_model = model_badges[0]
+                for badge in model_badges[1]:
+                    if badge in title.lower():
+                        car_badge = badge
                 break
         return car_model, car_badge
