@@ -4,6 +4,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import pandas
 from datetime import datetime
+import re
 import pdb
 
 
@@ -30,41 +31,34 @@ class HyundaiSpider(scrapy.Spider):
 
         base_url = "http://cars.hyundai.com.au/list.php/used_cars/page_1/"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            base_url = "http://cars.hyundai.com.au/list.php/used_cars/page_{}/".format(str(current_pagination))
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
+
+
+    def parse_all_pages_urls(self, response):
+        """ Extracts URLs of all pages. """
+        
+        cars_found_text = response.css(".inventory-main")[0].css("h3")[0].css(
+            "small::text").extract_first()
+
+        num_results_regex = re.compile(r'\d+')
+        num_results = int(num_results_regex.search(cars_found_text).group())
+        num_pages = int(num_results/21) + 1
+        for current_pagination in range(num_pages):
+            base_url = "http://cars.hyundai.com.au/list.php/used_cars/page_{}/".format(str(current_pagination+1))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
-
-
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations as the total number of results divided by the size of a page. """
-
-        pagination_text = driver.find_element_by_class_name("footer-text").text
-        self.max_pagination = int(pagination_text.split("/")[-1].split("\n")[0])
-        return 1
 
 
     def parse_all_cars_within_page(self, response):
         """ Extracts all cars URLs within a page. """
 
-        cars_blocks = response.css(".vehicle-item")
+        cars_blocks = response.css(".search-results-list")[0].css(".vehicle-item")
         cars_urls = [
             car_block.css("a::attr(href)").extract_first() for car_block in cars_blocks]
-        """
         for url in cars_urls:
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "http://cars.hyundai.com.au/view.php/used_cars/Used_MY16_RB3_ACCENT_4_SEDAN_14P_ACTIVE_MAN/20125156/"
-        yield scrapy.Request(
-            url = url, callback = self.parse_car, meta={"url": url})
 
 
     def parse_car(self, response):
@@ -76,7 +70,7 @@ class HyundaiSpider(scrapy.Spider):
         car_model, car_badge = self.parse_car_model_badge(title)
         initial_details = {
             "TIMESTAMP": int(datetime.timestamp(datetime.now())), "LINK": link, "MAKE": self.make,
-            "MODEL": car_model, "YEAR": year}
+            "MODEL": car_model, "YEAR": year, "BADGE": car_badge}
         car_panels = response.css(".cta-key-values")[0].css("h4 *::text").extract()
         if len(car_panels)>=6:
             engine = " ".join([car_panels[4], car_panels[5]])

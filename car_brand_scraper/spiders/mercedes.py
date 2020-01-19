@@ -3,6 +3,7 @@ import json
 from selenium import webdriver
 import pandas
 from datetime import datetime
+import re
 import pdb
 
 
@@ -26,28 +27,25 @@ class MercedesSpider(scrapy.Spider):
     def start_requests(self):
         """ Browse to the base url the scraper starts from. """
 
+    
         base_url = "https://www.pre-owned.mercedes-benz.com.au/listing"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            base_url = "https://www.pre-owned.mercedes-benz.com.au/listing?page={}".format(str(current_pagination))
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
+
+
+    def parse_all_pages_urls(self, response):
+        """ Extracts URLs of all pages. """
+        
+        cars_found_text = response.css(".cars-found::text").extract_first()
+        num_results_regex = re.compile(r'\d+')
+        num_results = int(num_results_regex.search(cars_found_text).group())
+        num_pages = int(num_results/12) + 1
+        for current_pagination in range(num_pages):
+            base_url = "https://www.pre-owned.mercedes-benz.com.au/listing?page={}".format(str(current_pagination+1))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
 
-    
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        pagination_text = driver.find_element_by_class_name("cars-found").text
-        self.max_pagination = int(pagination_text.split(" ")[0])/ ...
-        return 1
-    
 
     def parse_all_cars_within_page(self, response):
         """ Extracts all cars URLs within a page. """
@@ -55,14 +53,9 @@ class MercedesSpider(scrapy.Spider):
         cars_blocks = response.css(".car-list")
         cars_urls = [
             car_block.css("a::attr(href)").extract_first() for car_block in cars_blocks]
-        """
         for url in cars_urls:
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "https://www.pre-owned.mercedes-benz.com.au/details/2013-mercedes-benz-b-180/OAG-AD-18182155"
-        yield scrapy.Request(
-            url = url, callback = self.parse_car, meta={"url": url})
 
 
     def parse_car(self, response):

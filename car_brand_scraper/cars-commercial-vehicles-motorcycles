@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<!--[if IE 7]>
+<html class="ie ie7" lang="en-US" ng-app="app" ng-controller="AppCtrl as AppCtrl">
+<![endif]-->
+<!--[if IE 8]>
+<html class="ie ie8" lang="en-US" ng-app="app" ng-controller="AppCtrl as AppCtrl">
+<![endif]-->
+<!--[if !(IE 7) & !(IE 8)]><!-->
+<html lang="en-US" ng-app="app" ng-controller="AppCtrl as AppCtrl">
+<!--<![endif]-->
+
+<head>
+    <meta name="google-site-verification" content="UDtz6lCCb4T15kdhvoJe1i1glg884m3LBcpDxzVV040" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"><script type="text/javascript">(window.NREUM||(NREUM={})).loader_config={licenseKey:"c0cab714b3",applicationID:"281013979"};window.NREUM||(NREUM={}),__nr_require=function(n,e,t){function r(t){if(!e[t]){var i=e[t]={exports:{}};n[t][0].call(i.exports,function(e){var i=n[t][1][e];return r(i||e)},i,i.exports)}return e[t].exports}if("function"==typeof __nr_require)return __nr_require;for(var i=0;i<t.length;i++)r(t[i]);return r}({1:[function(n,e,t){function r(){}function i(n,e,t){return function(){return o(n,[u.now()].concat(f(arguments)),e?null:this,t),e?void 0:this}}var o=n("handle"),a=n(4),f=n(5),c=n("ee").get("tracer"),u=n("loader"),s=NREUM;"undefined"==typeof window.newrelic&&(newrelic=s);var p=["setPageViewName","setCustomAttribute","setErrorHandler","finished","addToTrace","inlineHit","addRelease"],d="api-",l=d+"ixn-";a(p,function(n,e){s[e]=i(d+e,!0,"api")}),s.addPageAction=i(d+"addPageAction",!0),s.setCurrentRouteName=i(d+"routeName",!0),e.exports=newrelic,s.interaction=function(){return(new r).get()};var m=r.prototype={createTracer:function(n,e){var t={},r=this,i="function"==typeof e;return o(l+"tracer",[u.now(),n,t],r),function(){if(c.emit((i?"":"no-")+"fn-start",[u.now(),r,i],t),i)try{return e.apply(this,arguments)}catch(n){throw c.emit("fn-err",[arguments,this,n],t),n}finally{c.emit("fn-end",[u.now()],t)}}}};a("actionText,setName,setAttribute,save,ignore,onEnd,getContext,end,get".split(","),function(n,e){m[e]=i(l+e)}),newrelic.noticeError=function(n,e){"string"==typeof n&&(n=new Error(n)),o("err",[n,u.now(),!1,e])}},{}],2:[function(n,e,t){function r(n,e){var t=n.getEntries();t.forEach(function(n){"first-paint"===n.name?a("timing",["fp",Math.floor(n.startTime)]):"first-contentful-paint"===n.name&&a("timing",["fcp",Math.floor(n.startTime)])})}function i(n){if(n instanceof c&&!s){var e,t=Math.round(n.timeStamp);e=t>1e12?Date.now()-t:f.now()-t,s=!0,a("timing",["fi",t,{type:n.type,fid:e}])}}if(!("init"in NREUM&&"page_view_timing"in NREUM.init&&"enabled"in NREUM.init.page_view_timing&&NREUM.init.page_view_timing.enabled===!1)){var o,a=n("handle"),f=n("loader"),c=NREUM.o.EV;if("PerformanceObserver"in window&&"function"==typeof window.PerformanceObserver){o=new PerformanceObserver(r);try{o.observe({entryTypes:["paint"]})}catch(u){}}if("addEventListener"in document){var s=!1,p=["click","keydown","mousedown","pointerdown","touchstart"];p.forEach(function(n){document.addEventListener(n,i,!1)})}}},{}],3:[function(n,e,t){function r(n,e){if(!i)return!1;if(n!==i)return!1;if(!e)return!0;if(!o)return!1;for(var t=o.split("."),r=e.split("."),a=0;a<r.length;a++)if(r[a]!==t[a])return!1;return!0}var i=null,o=null,a=/Version\/(\S+)\s+Safari/;if(navigator.userAgent){var f=navigator.userAgent,c=f.match(a);c&&f.indexOf("Chrome")===-1&&f.indexOf("Chromium")===-1&&(i="Safari",o=c[1])}e.exports={agent:i,version:o,match:r}},{}],4:[function(n,e,t){function r(n,e){var t=[],r="",o=0;for(r in n)i.call(n,r)&&(t[o]=e(r,n[r]),o+=1);return t}var i=Object.prototype.hasOwnProperty;e.exports=r},{}],5:[function(n,e,t){function r(n,e,t){e||(e=0),"undefined"==typeof t&&(t=n?n.length:0);for(var r=-1,i=t-e||0,o=Array(i<0?0:i);++r<i;)o[r]=n[e+r];return o}e.exports=r},{}],6:[function(n,e,t){e.exports={exists:"undefined"!=typeof window.performance&&window.performance.timing&&"undefined"!=typeof window.performance.timing.navigationStart}},{}],ee:[function(n,e,t){function r(){}function i(n){function e(n){return n&&n instanceof r?n:n?c(n,f,o):o()}function t(t,r,i,o){if(!d.aborted||o){n&&n(t,r,i);for(var a=e(i),f=v(t),c=f.length,u=0;u<c;u++)f[u].apply(a,r);var p=s[y[t]];return p&&p.push([b,t,r,a]),a}}function l(n,e){h[n]=v(n).concat(e)}function m(n,e){var t=h[n];if(t)for(var r=0;r<t.length;r++)t[r]===e&&t.splice(r,1)}function v(n){return h[n]||[]}function g(n){return p[n]=p[n]||i(t)}function w(n,e){u(n,function(n,t){e=e||"feature",y[t]=e,e in s||(s[e]=[])})}var h={},y={},b={on:l,addEventListener:l,removeEventListener:m,emit:t,get:g,listeners:v,context:e,buffer:w,abort:a,aborted:!1};return b}function o(){return new r}function a(){(s.api||s.feature)&&(d.aborted=!0,s=d.backlog={})}var f="nr@context",c=n("gos"),u=n(4),s={},p={},d=e.exports=i();d.backlog=s},{}],gos:[function(n,e,t){function r(n,e,t){if(i.call(n,e))return n[e];var r=t();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(n,e,{value:r,writable:!0,enumerable:!1}),r}catch(o){}return n[e]=r,r}var i=Object.prototype.hasOwnProperty;e.exports=r},{}],handle:[function(n,e,t){function r(n,e,t,r){i.buffer([n],r),i.emit(n,e,t)}var i=n("ee").get("handle");e.exports=r,r.ee=i},{}],id:[function(n,e,t){function r(n){var e=typeof n;return!n||"object"!==e&&"function"!==e?-1:n===window?0:a(n,o,function(){return i++})}var i=1,o="nr@id",a=n("gos");e.exports=r},{}],loader:[function(n,e,t){function r(){if(!x++){var n=E.info=NREUM.info,e=l.getElementsByTagName("script")[0];if(setTimeout(s.abort,3e4),!(n&&n.licenseKey&&n.applicationID&&e))return s.abort();u(y,function(e,t){n[e]||(n[e]=t)}),c("mark",["onload",a()+E.offset],null,"api");var t=l.createElement("script");t.src="https://"+n.agent,e.parentNode.insertBefore(t,e)}}function i(){"complete"===l.readyState&&o()}function o(){c("mark",["domContent",a()+E.offset],null,"api")}function a(){return O.exists&&performance.now?Math.round(performance.now()):(f=Math.max((new Date).getTime(),f))-E.offset}var f=(new Date).getTime(),c=n("handle"),u=n(4),s=n("ee"),p=n(3),d=window,l=d.document,m="addEventListener",v="attachEvent",g=d.XMLHttpRequest,w=g&&g.prototype;NREUM.o={ST:setTimeout,SI:d.setImmediate,CT:clearTimeout,XHR:g,REQ:d.Request,EV:d.Event,PR:d.Promise,MO:d.MutationObserver};var h=""+location,y={beacon:"bam.nr-data.net",errorBeacon:"bam.nr-data.net",agent:"js-agent.newrelic.com/nr-1158.min.js"},b=g&&w&&w[m]&&!/CriOS/.test(navigator.userAgent),E=e.exports={offset:f,now:a,origin:h,features:{},xhrWrappable:b,userAgent:p};n(1),n(2),l[m]?(l[m]("DOMContentLoaded",o,!1),d[m]("load",r,!1)):(l[v]("onreadystatechange",i),d[v]("onload",r)),c("mark",["firstbyte",f],null,"api");var x=0,O=n(6)},{}],"wrap-function":[function(n,e,t){function r(n){return!(n&&n instanceof Function&&n.apply&&!n[a])}var i=n("ee"),o=n(5),a="nr@original",f=Object.prototype.hasOwnProperty,c=!1;e.exports=function(n,e){function t(n,e,t,i){function nrWrapper(){var r,a,f,c;try{a=this,r=o(arguments),f="function"==typeof t?t(r,a):t||{}}catch(u){d([u,"",[r,a,i],f])}s(e+"start",[r,a,i],f);try{return c=n.apply(a,r)}catch(p){throw s(e+"err",[r,a,p],f),p}finally{s(e+"end",[r,a,c],f)}}return r(n)?n:(e||(e=""),nrWrapper[a]=n,p(n,nrWrapper),nrWrapper)}function u(n,e,i,o){i||(i="");var a,f,c,u="-"===i.charAt(0);for(c=0;c<e.length;c++)f=e[c],a=n[f],r(a)||(n[f]=t(a,u?f+i:i,o,f))}function s(t,r,i){if(!c||e){var o=c;c=!0;try{n.emit(t,r,i,e)}catch(a){d([a,t,r,i])}c=o}}function p(n,e){if(Object.defineProperty&&Object.keys)try{var t=Object.keys(n);return t.forEach(function(t){Object.defineProperty(e,t,{get:function(){return n[t]},set:function(e){return n[t]=e,e}})}),e}catch(r){d([r])}for(var i in n)f.call(n,i)&&(e[i]=n[i]);return e}function d(e){try{n.emit("internal-error",e)}catch(t){}}return n||(n=i),t.inPlace=u,t.flag=a,t}},{}]},{},["loader"]);</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width">
+    <title>Search - Slattery Auctions </title>
+    <link rel="profile" href="http://gmpg.org/xfn/11">
+    <link rel="pingback" href="https://www.slatteryauctions.com.au/xmlrpc.php">
+    <link rel="shortcut icon" href="/favicon.ico">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+
+
+
+    <!--[if lt IE 9]>
+        <script type="text/javascript">window.location = "http://alternate.slatteryauctions.com.au/";</script>
+    <![endif]-->
+
+    
+<!-- This site is optimized with the Yoast SEO plugin v12.1 - https://yoast.com/wordpress/plugins/seo/ -->
+<link rel="canonical" href="https://www.slatteryauctions.com.au/search-results" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Search - Slattery Auctions" />
+<meta property="og:url" content="https://www.slatteryauctions.com.au/search-results" />
+<meta property="og:site_name" content="Slattery Auctions" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Search - Slattery Auctions" />
+<script type='application/ld+json' class='yoast-schema-graph yoast-schema-graph--main'>{"@context":"https://schema.org","@graph":[{"@type":"WebSite","@id":"https://www.slatteryauctions.com.au/#website","url":"https://www.slatteryauctions.com.au/","name":"Slattery Auctions","potentialAction":{"@type":"SearchAction","target":"https://www.slatteryauctions.com.au/?s={search_term_string}","query-input":"required name=search_term_string"}},{"@type":"WebPage","@id":"https://www.slatteryauctions.com.au/search-results#webpage","url":"https://www.slatteryauctions.com.au/search-results","inLanguage":"en-US","name":"Search - Slattery Auctions","isPartOf":{"@id":"https://www.slatteryauctions.com.au/#website"},"datePublished":"2014-11-06T05:17:21+00:00","dateModified":"2015-07-02T05:41:32+00:00"}]}</script>
+<!-- / Yoast SEO plugin. -->
+
+<link rel='dns-prefetch' href='//s.w.org' />
+		<script type="text/javascript">
+			window._wpemojiSettings = {"baseUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/72x72\/","ext":".png","svgUrl":"https:\/\/s.w.org\/images\/core\/emoji\/12.0.0-1\/svg\/","svgExt":".svg","source":{"concatemoji":"\/wp-includes\/js\/wp-emoji-release.min.js?ver=5.2.3"}};
+			!function(a,b,c){function d(a,b){var c=String.fromCharCode;l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,a),0,0);var d=k.toDataURL();l.clearRect(0,0,k.width,k.height),l.fillText(c.apply(this,b),0,0);var e=k.toDataURL();return d===e}function e(a){var b;if(!l||!l.fillText)return!1;switch(l.textBaseline="top",l.font="600 32px Arial",a){case"flag":return!(b=d([55356,56826,55356,56819],[55356,56826,8203,55356,56819]))&&(b=d([55356,57332,56128,56423,56128,56418,56128,56421,56128,56430,56128,56423,56128,56447],[55356,57332,8203,56128,56423,8203,56128,56418,8203,56128,56421,8203,56128,56430,8203,56128,56423,8203,56128,56447]),!b);case"emoji":return b=d([55357,56424,55356,57342,8205,55358,56605,8205,55357,56424,55356,57340],[55357,56424,55356,57342,8203,55358,56605,8203,55357,56424,55356,57340]),!b}return!1}function f(a){var c=b.createElement("script");c.src=a,c.defer=c.type="text/javascript",b.getElementsByTagName("head")[0].appendChild(c)}var g,h,i,j,k=b.createElement("canvas"),l=k.getContext&&k.getContext("2d");for(j=Array("flag","emoji"),c.supports={everything:!0,everythingExceptFlag:!0},i=0;i<j.length;i++)c.supports[j[i]]=e(j[i]),c.supports.everything=c.supports.everything&&c.supports[j[i]],"flag"!==j[i]&&(c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&c.supports[j[i]]);c.supports.everythingExceptFlag=c.supports.everythingExceptFlag&&!c.supports.flag,c.DOMReady=!1,c.readyCallback=function(){c.DOMReady=!0},c.supports.everything||(h=function(){c.readyCallback()},b.addEventListener?(b.addEventListener("DOMContentLoaded",h,!1),a.addEventListener("load",h,!1)):(a.attachEvent("onload",h),b.attachEvent("onreadystatechange",function(){"complete"===b.readyState&&c.readyCallback()})),g=c.source||{},g.concatemoji?f(g.concatemoji):g.wpemoji&&g.twemoji&&(f(g.twemoji),f(g.wpemoji)))}(window,document,window._wpemojiSettings);
+		</script>
+		<style type="text/css">
+img.wp-smiley,
+img.emoji {
+	display: inline !important;
+	border: none !important;
+	box-shadow: none !important;
+	height: 1em !important;
+	width: 1em !important;
+	margin: 0 .07em !important;
+	vertical-align: -0.1em !important;
+	background: none !important;
+	padding: 0 !important;
+}
+</style>
+	<link rel='stylesheet' id='wp-block-library-css'  href='/wp-includes/css/dist/block-library/style.min.css?ver=5.2.3' type='text/css' media='all' />
+<link rel='stylesheet' id='tablepress-default-css'  href='/wp-content/plugins/tablepress/css/default.min.css?ver=1.9.2' type='text/css' media='all' />
+<link rel='stylesheet' id='pattern-library-css-css'  href='/pattern-library/build/assets/css/style.min.css?ver=5.2.3' type='text/css' media='all' />
+<link rel='stylesheet' id='technical-debt-css'  href='/wp-content/themes/slattery-reloaded/styles/technical-debt.css?ver=5.2.3' type='text/css' media='all' />
+<link rel='https://api.w.org/' href='https://www.slatteryauctions.com.au/wp-json/' />
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="https://www.slatteryauctions.com.au/xmlrpc.php?rsd" />
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="https://www.slatteryauctions.com.au/wp-includes/wlwmanifest.xml" /> 
+<meta name="generator" content="WordPress 5.2.3" />
+<link rel='shortlink' href='https://www.slatteryauctions.com.au/?p=139' />
+<link rel="alternate" type="application/json+oembed" href="https://www.slatteryauctions.com.au/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.slatteryauctions.com.au%2Fsearch-results" />
+<link rel="alternate" type="text/xml+oembed" href="https://www.slatteryauctions.com.au/wp-json/oembed/1.0/embed?url=https%3A%2F%2Fwww.slatteryauctions.com.au%2Fsearch-results&#038;format=xml" />
+
+        <script>
+            dataLayer = [];
+        </script>
+        
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl+ '&gtm_auth=dco7b1xJBIhulxanoWEqzQ&gtm_preview=env-9&gtm_cookies_win=x';f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-K9L655N');</script>
+<!-- End Google Tag Manager --></head>
+
+<body>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-K9L655N&gtm_auth=dco7b1xJBIhulxanoWEqzQ&gtm_preview=env-9&gtm_cookies_win=x"
+                  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div growl></div>
+    <header class="header">
+        <div class="container-fluid">
+            <div class="text-center">
+                <button class="header__trigger header__trigger--left collapsed navbar-toggle"
+                        type="button" data-toggle="collapse" data-target="#main-menu-user-menu" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="fa fa-bars"></span>
+                </button>
+                <a href="/">
+                    <img class="header__logo" src="/pattern-library/build/assets/img/slattery-logo.svg" alt="Slattery Auctions">
+                </a>
+<!--                <a href="tel:(02)40280000" class="header__trigger header__trigger--right collapsed navbar-toggle">-->
+<!--                    <span class="sr-only">(02) 4028 0000</span>-->
+<!--                    <icon class="icon-phone"></icon>-->
+<!--                </a>-->
+            </div>
+
+            <div class="collapse navbar-collapse" id="main-menu-user-menu">
+                 <div class="user-menu" ng-if="authService.loggedIn" ng-controller="AccountNavigationController" ng-cloak>
+        <ul class="user-menu__links user-menu__right nav navbar-nav navbar-right">
+            <li class="user-menu__link dropdown">
+                <a href="#" class="dropdown-toggle" role="button" aria-haspopup="true" aria-expanded="false">
+                    <img class="user-menu__profile" src="https://www.slatteryauctions.com.au/wp-content/themes/slattery-reloaded/production/assets/files/src/img/default-user.png" alt="User Profile Image">
+                    <span class="user-menu__name">{{authService.user.firstname + ' ' + authService.user.lastname}}</span>
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                                            <li><a href="https://www.slatteryauctions.com.au/my-account">My Account</a></li>
+                                            <li><a href="https://www.slatteryauctions.com.au/my-account/active-bids">Active Bids</a></li>
+                                            <li><a href="https://www.slatteryauctions.com.au/my-account/watching">Watching</a></li>
+                                            <li><a href="https://www.slatteryauctions.com.au/my-account/items-won">Items Won</a></li>
+                                            <li><a href="https://www.slatteryauctions.com.au/my-account/payments">Payments</a></li>
+                                            <li><a href="https://www.slatteryauctions.com.au/my-account/profile">Profile</a></li>
+                                        <li><a href ng-click="authService.logout()">Logout</a></li>
+                </ul>
+            </li>
+        </ul>
+ </div>
+
+ <div ng-if="!authService.loggedIn" ng-controller="AccountLoginModalController" class="header__actions">
+     <button class="btn btn--secondary" ng-click="authService.promptLogin()">
+         <i class="icon-login" aria-hidden="true"></i>
+         <span class="hidden-sm"> LOGIN</span>
+     </button>
+     <a class="btn btn--secondary reg-btn-width" href='/registration' data-toggle="modal" data-target="#modalRegister">
+         <i class="icon-person-plus" aria-hidden="true"></i>
+         <span class="hidden-sm" ng-click="gotoUrl('/registration')"> REGISTER</span>
+     </a>
+ </div>
+                <ul id="menu-primary-mobile" class="header__links"><li id="menu-item-99" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-99 right"><a href="https://www.slatteryauctions.com.au/auctions">Auctions</a></li>
+<li id="menu-item-97" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-97 left"><a href="https://www.slatteryauctions.com.au/tenders">Tenders</a></li>
+<li id="menu-item-96" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-96 right"><a href="https://www.slatteryauctions.com.au/valuations">Valuations</a></li>
+<li id="menu-item-1569" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-1569 left"><a href="https://www.slatteryauctions.com.au/faq">FAQ</a></li>
+<li id="menu-item-94" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-94 right"><a href="https://www.slatteryauctions.com.au/about-us">About Us</a></li>
+<li id="menu-item-93" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-93 left"><a href="https://www.slatteryauctions.com.au/contact-us">Contact Us</a></li>
+</ul><!--                <div class="header__phone">-->
+<!--                    <a href='tel:(02)40280000'><i class="icon-phone" aria-hidden="true"></i> (02) 4028 0000</a>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </header>
+
+<div class="search__bar">
+
+	<div class="container-fluid">
+
+	   	<section class="search " role="search" id="search-pane" ng-controller="SearchController" ng-cloak>
+
+			
+			<form role="form" id="search-form" name="searchForm" class="form-horizontal">
+
+				<ng-form id="basic-search-form" name="basicSearch">
+
+					<div class="form-group">
+
+						<div class="col-xs-9 col-sm-6 col-md-4">
+							<input type="text"
+								class="form-control search__control search__input"
+								placeholder="Search our inventory"
+								ng-model="search.phrase"
+								id="searchTerm"
+								ng-required="!search.category || search.category.categoryId == 'all'"
+							>
+						</div>
+
+						<div class="hidden-xs col-sm-4 col-md-4">
+							<dropdown-select
+								class="selectpicker search__control search__select"
+								data-style="form-control"
+								placeholder="Select Categories"
+								source="categories"
+								ng-if="!advancedSearchMode"
+								ng-model="search.category"
+								ng-change="clearSubcategory()"
+								ng-required="!search.phrase"
+							></dropdown-select>
+						</div>
+
+						<div class="col-xs-3 col-sm-1 col-md-2">
+							<button ng-if="!advancedSearchMode" class="btn btn-block btn--cta search__control" ng-click="submitSearch()" ng-disabled="searchForm.$invalid">
+								<i class="icon-search" aria-hidden="true"></i>
+								<span class="hidden-xs hidden-sm">Search</span>
+							</button>
+							<a ng-if="advancedSearchMode" class="search__advanced search__advanced--close visible-xs-block" ng-class="{'btn-close':advancedSearchMode}" href ng-click="toggleAdvancedSearch(); clearSubcategory();">
+								Close
+							</a>
+						</div>
+
+						<div class="col-xs-12 col-sm-1 col-md-2">
+							<a ng-if="!advancedSearchMode" class="search__advanced" ng-class="{'btn-close':advancedSearchMode}" href ng-click="toggleAdvancedSearch(); clearSubcategory();">
+								Advanced Search
+							</a>
+							<a ng-if="advancedSearchMode" class="search__advanced search__advanced--close hidden-xs" ng-class="{'btn-close':advancedSearchMode}" href ng-click="toggleAdvancedSearch(); clearSubcategory();">
+								Close
+							</a>
+						</div>
+
+					</div>
+
+				</ng-form>
+
+				<ng-form id="advanced-search-form" ng-if="advancedSearchMode" name="advancedSearch">
+
+					<div class="form-group category-input">
+
+						<div class="col-sm-6">
+							<label ng-class="{'label-hidden':!advancedSearchMode}">Category</label>
+							<dropdown-select
+								class="selectpicker search__control search__select"
+								placeholder="Select Category"
+								source="categories"
+								ng-model="search.category"
+								label-name="label"
+								ng-change="clearSubcategory()"
+								ng-required="!search.phrase"
+							></dropdown-select>
+						</div>
+
+						<div class="col-sm-6">
+							<label for="">Sub Category</label>
+							<dropdown-select
+								class="selectpicker search__control search__select"
+								ng-disabled="subcategories.length == 1"
+								placeholder="Select Sub Category"
+								source="subcategories"
+								ng-model="search.subcategory"
+								label-name="label"
+								ng-required="false"
+							></dropdown-select>
+						</div>
+
+					</div>
+
+					<div class="form-group category-input">
+                        <div class="col-sm-4">
+                            <label for="">Locations</label>
+                            <dropdown-select
+                                    class="selectpicker search__control search__select"
+                                    placeholder="Select Location"
+                                    source="locations"
+                                    ng-model="search.location"
+                                    label-name="label"
+                            ></dropdown-select>
+                        </div>
+
+						<div class="col-sm-4">
+							<label for="">Manufacturer</label>
+							<dropdown-select
+								class="selectpicker search__control search__select"
+								ng-disabled="!manufacturers"
+								placeholder="Select Manufacturer"
+								source="manufacturers"
+								ng-model="search.manufacturer"
+								label-name="label"
+								ng-required="false"
+							></dropdown-select>
+						</div>
+
+						<div class="col-sm-4">
+							<label for="">Model</label>
+							<dropdown-select
+								class="selectpicker search__control search__select"
+								ng-disabled="!models"
+								placeholder="Select Model"
+								source="models"
+								ng-model="search.model"
+								label-name="label"
+								ng-required="false"
+							></dropdown-select>
+						</div>
+
+					</div>
+                    <!-- Hiding Min and Max search fields for now, requested in SAO-1471 -->
+<!--					<div class="form-group category-input">-->
+<!---->
+<!--						<div class="col-sm-6">-->
+<!--							<div ng-class="{'has-error':advancedSearch.minPrice.$invalid}">-->
+<!--								<label for="minPrice">Min Price</label>-->
+<!--							    <div class="input-group">-->
+<!--							      	<div class="input-group-addon">$</div>-->
+<!--									<input ng-model="search.price.min"-->
+<!--										ui-validate="{validateMin: 'validateMin($value)'}"-->
+<!--										ui-validate-watch="'search.price.max'"-->
+<!--										type="number" min="0" step="1" class="form-control search__control search__input search__price"-->
+<!--										id="minPrice" name="minPrice" placeholder="Minimum Price"-->
+<!--										integer>-->
+<!--							    </div>-->
+<!--							</div>-->
+<!--						</div>-->
+<!---->
+<!--						<div class="col-sm-6">-->
+<!--							<div ng-class="{'has-error':advancedSearch.maxPrice.$invalid}">-->
+<!--								<label for="maxPrice">Max Price</label>-->
+<!--							    <div class="input-group">-->
+<!--							      <div class="input-group-addon">$</div>-->
+<!--									<input ng-model="search.price.max" type="number" min="0"-->
+<!--										ui-validate="{validateMax: 'validateMax($value)'}"-->
+<!--										ui-validate-watch="'search.price.min'"-->
+<!--										step="1" class="form-control search__control search__input search__price" id="maxPrice" name="maxPrice"-->
+<!--										placeholder="Maximum Price"-->
+<!--										integer>-->
+<!--							    </div>-->
+<!--							</div>-->
+<!--						</div>-->
+<!---->
+<!--					</div>-->
+
+					<div class="form-group category-input">
+
+						<div class="col-sm-12">
+							<label>Item Types</label><br>
+							<div class="btn-group">
+								<label class="btn btn-default" ng-class="{active:itemTypes.all}" ng-click="toggleAllTypes()">All</label>
+								<label ng-repeat="option in itemTypes.options" class="btn btn-default" ng-model="search.types[option.type]" btn-radio="option.type" btn-checkbox>{{option.label}}</label>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="form-group search-button advanced">
+
+						<div class="col-sm-2 col-md-2">
+							<div class="submit-wrap"
+								 popover="{{basicSearch.$invalid ? 'You must enter a search phrase or select a category.':(advancedSearch.$invalid ? 'You have errors in the form, please correct them':'')}}"
+								 popover-placement="top"
+								 popover-trigger="mouseenter"
+							>
+								<button type="submit" class="btn btn-block btn--cta search__control" ng-click="submitSearch()" ng-disabled="searchForm.$invalid">
+									<i class="icon-search" aria-hidden="true"></i>
+									Search
+								</button>
+							</div>
+						</div>
+
+					</div>
+
+				</ng-form>
+
+			</form>
+
+		</section>
+
+	</div>
+
+</div>
+<script type="text/javascript">
+    var categories =
+    [{"category_title":"Cars, Commercial Vehicles & Motorcycles","category_selection":[{"vendor_categories":"1"},{"vendor_categories":"4"},{"vendor_categories":"102"},{"vendor_categories":"530"}],"featured_image":1429,"search_url":"cars-commercial-vehicles-motorcycles","numItems":143,"vendor_categories":[1,4,102,530]},{"category_title":"Trucks & Trailers","category_selection":[{"vendor_categories":"42"},{"vendor_categories":"41"}],"featured_image":1430,"search_url":"trucks-trailers","numItems":114,"vendor_categories":[42,41]},{"category_title":"Machinery, Mining & Earthmoving","category_selection":[{"vendor_categories":"26"},{"vendor_categories":"11"},{"vendor_categories":"99"},{"vendor_categories":"515"},{"vendor_categories":"19"},{"vendor_categories":"116"},{"vendor_categories":"6"},{"vendor_categories":"126"}],"featured_image":1431,"search_url":"machinery-mining-earthmoving","numItems":22,"vendor_categories":[26,11,99,515,19,116,6,126]},{"category_title":"IT & Computers","category_selection":[{"vendor_categories":"132"},{"vendor_categories":"480"}],"featured_image":1432,"search_url":"it-computers","numItems":22,"vendor_categories":[132,480]},{"category_title":"Agricultural & Groundskeeping","category_selection":[{"vendor_categories":"17"},{"vendor_categories":"40"}],"featured_image":1434,"search_url":"agricultural-groundskeeping","numItems":1,"vendor_categories":[17,40]},{"category_title":"Marine & Aviation","category_selection":[{"vendor_categories":"5"},{"vendor_categories":"106"}],"featured_image":1435,"search_url":"marine-aviation","numItems":6,"vendor_categories":[5,106]},{"category_title":"General Goods","category_selection":[{"vendor_categories":"22"},{"vendor_categories":"153"},{"vendor_categories":"10"},{"vendor_categories":"103"}],"featured_image":1436,"search_url":"general","numItems":687,"vendor_categories":[22,153,10,103]}];
+</script>
+
+<section class="snapshot">
+    <div class="container-fluid">
+
+        <!-- breadcrumbs -->
+        <ol class="breadcrumb">
+            <li class="breadcrumb__link">
+                <a href="/">
+                    <span class="hidden-md hidden-lg">
+                        <icon class="icon-house" aria-hidden="true"></icon>
+                    </span>
+                    <span class="hidden-sm hidden-xs">Home</span>
+                </a>
+            </li>
+
+            <li class="breadcrumb__link breadcrumbs__link--active">
+                Search results
+            </li>
+
+        </ol>
+        <!-- end of breadcrumbs -->
+
+        <h1>Search results</h1>
+    </div>
+</section>
+<div class="container-fluid ng-cloak" ng-controller="SearchResultsController" ng-cloak>
+    <!-- Main component for a primary marketing message or call to action -->
+    <notification-list source="results"></notification-list>
+    <div ng-if="runningSearch">
+        Search is running, please standby &hellip;
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+    </div>
+
+    <div ng-if="searching" class="col-xs-12 text-center">Searching...</div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-3">
+            <aside class="filters ng-cloak" ng-if="results.length > 0" ng-cloak>
+
+    <div class="filters__header">
+        <h6 class="filters__title visible-xs-block">
+            <a class="collapsed" role="button" data-toggle="collapse" href="#js-filters" aria-expanded="false" aria-controls="js-filters">
+                <icon class="icon-filters" aria-hidden="true"></icon> Filters <i class="filters__chevron fa fa-angle-up" aria-hidden="true"></i>
+            </a>
+        </h6>
+        <h3 class="filters__title hidden-xs">
+            <icon class="icon-filters" aria-hidden="true"></icon>
+            Filters
+        </h3>
+        <a class="filters__reset hidden-xs" ng-click="resetFilter()">Reset Filter</a>
+    </div>
+
+    <div class="filters__body collapse" id="js-filters">
+        <div class="filter-group filter-group__reset-mobile visible-xs">
+            <a class="filters__reset" ng-click="resetFilter()">Reset Filter</a>
+        </div>
+
+        <!-- Categories filters -->
+        <div class="filter-group">
+            <a href="#categoriesFilter" class="filter-group__name collapsed" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="categoriesFilter">
+                Categories <i class="filter-group__icon fa fa-angle-down" aria-hidden="true"></i>
+            </a>
+            <div class="filter-group__collapse collapse in" id="categoriesFilter">
+                <div class="option-input" ng-repeat="category in getSection('categories', 'category_title').options | limitTo: getSection('categories').limit">
+                    <input class="option-input__control" id="category_{{category.vendor_categories}}" ng-model="selectedcategories[category.vendor_categories]" ng-change="filterResults('categories')"  type="checkbox"/>
+                    <label class="option-input__label" for="category_{{category.vendor_categories}}">{{category.category_title}} <!--({{category.count}})--></label>
+                </div>
+                <div class="filters_more-options-group">
+                    <a class="filters__more" ng-if="!getSection('categories').showMoreOptions && getSection('categories').options.length > getSection('categories').limit" ng-click="showAllForFilter(getSection('categories').key)">More Options</a>
+                    <a class="filters__more" ng-if="getSection('categories').showMoreOptions" ng-click="showAllForFilter(getSection('categories').key)">Less Options</a>
+                </div>
+            </div>
+        </div>
+        <!-- End of Categories filters -->
+
+        <!-- Sub Categories filters -->
+        <div class="filter-group" ng-show="getSection('subcategories').options.length > 0">
+            <a href="#subCategoriesFilter" class="filter-group__name collapsed" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="subCategoriesFilter">
+                Sub Categories <i class="filter-group__icon fa fa-angle-down" aria-hidden="true"></i>
+            </a>
+            <div class="filter-group__collapse collapse in" id="subCategoriesFilter">
+                <div class="option-input" ng-repeat="subcategory in getSection('subcategories', 'label').options | limitTo: getSection('subcategories').limit">
+                    <input class="option-input__control" id="subcategory_{{subcategory.id}}" ng-model="selectedsubcategories[subcategory.id]" ng-change="filterResults('subcategories')" type="checkbox"/>
+                    <label class="option-input__label" for="subcategory_{{subcategory.id}}">{{subcategory.label}} <!--({{subcategory.count}})--></label>
+                </div>
+                <div class="filters_more-options-group">
+                    <a class="filters__more" ng-if="!getSection('subcategories').showMoreOptions && getSection('subcategories').options.length > getSection('subcategories').limit" ng-click="showAllForFilter(getSection('subcategories').key)">More Options</a>
+                    <a class="filters__more" ng-if="getSection('subcategories').showMoreOptions" ng-click="showAllForFilter(getSection('subcategories').key)">Less Options</a>
+                </div>
+            </div>
+        </div>
+        <!-- End of Sub Categories filters -->
+
+        <!-- Make and Brand filters -->
+        <div class="filter-group" ng-show="getSection('manufacturers').options.length > 0">
+            <a href="#makeBrandFilter" class="filter-group__name collapsed" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="makeBrandFilter">
+                Make &amp; Brand <i class="filter-group__icon fa fa-angle-down" aria-hidden="true"></i>
+            </a>
+            <div class="filter-group__collapse collapse in" id="makeBrandFilter">
+                <div class="option-input" ng-repeat="manufacturer in getSection('manufacturers', 'label').options | limitTo:  getSection('manufacturers').limit">
+                    <input class="option-input__control" id="manufacturer_{{manufacturer.id}}" name="manufacturer_{{manufacturer.id}}" ng-model="selectedmanufacturers[manufacturer.id]" ng-change="filterResults('manufacturers')" type="checkbox"/>
+                    <label class="option-input__label" for="manufacturer_{{manufacturer.id}}">{{manufacturer.label}} <!--({{manufacturer.count}})--></label>
+                </div>
+                <div class="filters_more-options-group">
+                    <a class="filters__more" ng-if="!getSection('manufacturers').showMoreOptions && getSection('manufacturers').options.length > getSection('manufacturers').limit" ng-click="showAllForFilter(getSection('manufacturers').key)">More Options</a>
+                    <a class="filters__more" ng-if="getSection('manufacturers').showMoreOptions" ng-click="showAllForFilter(getSection('manufacturers').key)">Less Options</a>
+                </div>
+            </div>
+        </div>
+        <!-- End of Make and Brand filters -->
+
+        <!-- Model filters -->
+        <div class="filter-group" ng-show="getSection('models').options.length > 0">
+            <a href="#modelFilters" class="filter-group__name collapsed" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="modelFilters">
+                Model <i class="filter-group__icon fa fa-angle-down" aria-hidden="true"></i>
+            </a>
+            <div class="filter-group__collapse collapse in" id="modelFilters">
+                <div class="option-input" ng-repeat="model in getSection('models', 'label').options | limitTo:  getSection('models').limit">
+                    <input class="option-input__control" id="model_{{model.id}}" name="model_{{model.id}}" ng-model="selectedmodels[model.id]" ng-change="filterResults('models')" type="checkbox"/>
+                    <label class="option-input__label" for="model_{{model.id}}">{{model.label}} <!--({{model.count}})--></label>
+                </div>
+                <div class="filters_more-options-group">
+                    <a class="filters__more" ng-if="!getSection('models').showMoreOptions && getSection('models').options.length > getSection('models').limit" ng-click="showAllForFilter(getSection('models').key)">More Options</a>
+                    <a class="filters__more" ng-if="getSection('models').showMoreOptions" ng-click="showAllForFilter(getSection('models').key)">Less Options</a>
+                </div>
+            </div>
+        </div>
+        <!-- Model filters -->
+
+        <!-- Location filters -->
+        <div class="filter-group" ng-show="getSection('locations').options.length > 0 && !hideLocationFilter">
+            <a href="#locationFilters" class="filter-group__name collapsed" role="button" data-toggle="collapse" aria-expanded="true" aria-controls="locationFilters">
+                Location <i class="filter-group__icon fa fa-angle-down" aria-hidden="true"></i>
+            </a>
+            <div class="filter-group__collapse collapse in" id="locationFilters">
+                <div class="option-input" ng-repeat="location in  getSection('locations', 'label').options | limitTo:  getSection('locations').limit">
+                    <input class="option-input__control" id="location_{{location.id}}" name="location_{{location.id}}" ng-model="selectedlocations[location.id]" ng-change="filterResults('locations')" type="checkbox"/>
+                    <label class="option-input__label" for="location_{{location.id}}">{{location.label}} <!--({{location.count}})--></label>
+                </div>
+                <div class="filters_more-options-group">
+                    <a class="filters__more" ng-if="!getSection('locations').showMoreOptions && getSection('locations').options.length > getSection('locations').limit" ng-click="showAllForFilter(getSection('locations').key)">More Options</a>
+                    <a class="filters__more" ng-if="getSection('locations').showMoreOptions" ng-click="showAllForFilter(getSection('locations').key)">Less Options</a>
+                </div>
+            </div>
+        </div>
+        <!-- Location filters -->
+
+    </div>
+
+</aside>
+        </div>
+        <div class="col-xs-12 col-sm-9">
+            <!--<div id="search-results" ng-if="hasSearch && hasResults" infinite-scroll="loadMoreResults()" infinite-scroll-distance="0" infinite-scroll-disabled="noMoreItemsToLoad || searching" infinite-scroll-immediate-check="false">-->
+
+            <div id="search-results" ng-if="hasSearch && hasResults">
+                <!-- <section id="result-header" class="search_header">
+                    <div class="search_title">
+                        <h1>
+                            Your results
+
+                            <span>({{visibleResults()}})</span>
+                        </h1>
+                    </div>
+                    <div class="sort_by" style="display: none;">
+                        Sort by
+                        <dropdown-select placeholder="Most recent" source="categories" ng-model="search.category" label-name="category_title"></dropdown-select>
+                    </div>
+                </section>
+                <hr  /> -->
+                <div id="result-list">
+                    <div class="content_twocol single_product">
+                        <section class="main_content">
+                            <div ng-if="results.length == 0">
+                                No results found
+                            </div>
+
+                            <!-- grid view -->
+                            <div class="item-cards">
+                                <auction-item
+                                    data="item"
+                                    updated-closed-auctions="updatedClosedAuctions"
+                                    ng-if="results.length > 0"
+                                    ng-repeat="item in results"
+                                    type="{{item.auctype}}"
+                                    updating="searching"
+                                    ></auction-item>
+                            </div>
+                            <!--/ grid_view -->
+                        </section>
+                        <!-- / main content -->
+                    </div>
+                    <!-- /content_twocol -->
+                </div>
+                <!--<notification-list source="results"></notification-list>-->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /container -->
+<footer class="footer">
+    <div class="footer__cta">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 col-md-7">
+                    <span class="footer__headline">Subscribe</span>
+                    <span class="footer__sub-headline">Sign up to our Newsletter for alerts and news of upcoming auction</span>
+                </div>
+                <div class="col-xs-12 col-md-5">
+                    <subscribe></subscribe>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer__main">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xs-12 col-sm-4 col-md-4">
+                    <a href="/">
+                        <img class="footer__logo" src="https://www.slatteryauctions.com.au/wp-content/themes/slattery-reloaded/production/assets/files/src/img/slattery-logo.svg" alt="Slattery Auctions logo">
+                    </a>
+                    <div class="footer__bio">
+                        <p><b></b>Slattery Auctions Australia has become the most dynamic auction house and valuation practice in Australia. Their diversity, flexibility, experience and broad spectrum of specialities has set them apart from larger bulk handling competitors.</p>
+                    </div>
+                </div>
+                <div class="col-xs-6 col-sm-2 col-md-2">
+                    <ul id="menu-footer-menu-on-the-website" class="footer__links"><li id="menu-item-21" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-21 right"><a href="https://www.slatteryauctions.com.au/auctions">Auctions</a></li>
+<li id="menu-item-72" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-72 left"><a href="https://www.slatteryauctions.com.au/tenders">Tenders</a></li>
+<li id="menu-item-71" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-71 right"><a href="https://www.slatteryauctions.com.au/valuations">Valuations</a></li>
+<li id="menu-item-74" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-74 left"><a href="https://www.slatteryauctions.com.au/news">News</a></li>
+<li id="menu-item-69" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-69 right"><a href="https://www.slatteryauctions.com.au/about-us">About Us</a></li>
+<li id="menu-item-732" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-732 left"><a href="https://www.slatteryauctions.com.au/quarterly-reports">Reports</a></li>
+</ul>                </div>
+                <div class="col-xs-6 col-sm-2 col-md-2">
+                    <ul id="menu-footer-menu-assistance" class="footer__links"><li id="menu-item-76" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-76 right"><a href="https://www.slatteryauctions.com.au/about-us">About Us</a></li>
+<li id="menu-item-75" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-75 left"><a href="https://www.slatteryauctions.com.au/contact-us">Contact Us</a></li>
+<li id="menu-item-215" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-215 right"><a href="https://www.slatteryauctions.com.au/faq">FAQ</a></li>
+<li id="menu-item-87" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-87 left"><a href="https://www.slatteryauctions.com.au/sitemap">Sitemap</a></li>
+<li id="menu-item-86" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-86 right"><a href="https://www.slatteryauctions.com.au/privacy-policy">Privacy Policy</a></li>
+<li id="menu-item-85" class="menu-item menu-item-type-post_type menu-item-object-page menu-item-85 left"><a href="https://www.slatteryauctions.com.au/terms-conditions">Terms &#038; Conditions</a></li>
+</ul>                </div>
+                <div class="col-xs-12 col-sm-4 col-md-3 col-md-offset-1">
+                    <p class="footer__header">Secure Transactions<p>
+                    <div class="footer__pay">
+                        <img src="https://www.slatteryauctions.com.au/wp-content/themes/slattery-reloaded/production/assets/files/src/img/mc.png" alt=""/>
+                        <img src="https://www.slatteryauctions.com.au/wp-content/themes/slattery-reloaded/production/assets/files/src/img/visa.png" class="visa-card" alt=""/>
+                    </div>
+                    <div>
+    <p class="footer__header">Be social</p>
+
+    <ul class="social">
+        <li class="social__icon">
+            <a href="https://www.facebook.com/pages/Slattery-Auctions/153262034744936" target="_blank" class="fa fa-facebook"></a>
+        </li>
+        <li class="social__icon">
+            <a href="https://twitter.com/SlatteryAU" target="_blank" class="fa fa-twitter"></a>
+        </li>
+        <li class="social__icon">
+            <a href="http://www.linkedin.com/company/slattery-auctions-australia-pty-ltd" target="_blank" class="fa fa-linkedin"></a>
+        </li>
+        <li class="social__icon">
+            <a href="https://www.youtube.com/user/SlatteryAuctionsAU" target="_blank" class="fa fa-youtube"></a>
+        </li>
+    </ul>
+</div>                </div>
+            </div>
+        </div>
+    </div>
+    <div class="footer__copyright">
+        &copy; Copyright 2020.<br>
+        All rights reserved Slattery Auctions Australia
+    </div>
+</footer>
+
+
+<script type="text/javascript">
+piAId = '347961';
+piCId = '2233';
+(function() {
+function async_load()
+{ var s = document.createElement('script'); s.type = 'text/javascript'; s.src = ('https:' == document.location.protocol ? 'https://pi' : 'http://cdn') + '.pardot.com/pd.js'; var c = document.getElementsByTagName('script')[0]; c.parentNode.insertBefore(s, c); }
+if(window.attachEvent)
+{ window.attachEvent('onload', async_load); }
+else
+{ window.addEventListener('load', async_load, false); }
+})();
+</script><script type="text/javascript" src="//platform-api.sharethis.com/js/sharethis.js#property=5a569949facb7500114a740a&product=custom-share-buttons"></script>
+        <script>
+        var ticking = false;
+        var $_monitor = window;
+        if(navigator.userAgent.indexOf('MSIE')!==-1 || navigator.appVersion.indexOf('Trident/') > -1){
+           $_monitor = document.body
+        }
+        ['scroll', 'resize'].forEach(function(e) {
+            $_monitor.addEventListener(e, function() {
+                monitorWindow();
+            });
+        });
+        var getScrollTop = function() {
+            return Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop);
+        };
+        var $_snapshot = document.querySelector('section.snapshot');
+        var $_header = document.querySelector('header.header');
+        var $_search = document.querySelector('div.search__bar');
+        function updateScroll() {
+            var scrollTop = getScrollTop();
+            if (scrollTop > 0) {
+                document.body.classList.add('scrolled');
+            } else {
+                document.body.classList.remove('scrolled');
+            }
+//            if ($_snapshot) {
+//                var $_parent = $_snapshot.parentElement;
+//                var headerRect = $_header.getBoundingClientRect();
+//                var searchRect = $_search.getBoundingClientRect();
+//                if (scrollTop > searchRect.height - headerRect.height + 1) {
+//                    $_parent.classList.add('snapshot--fixed');
+//                    var snapshotRect = $_snapshot.getBoundingClientRect();
+//                    $_parent.style.paddingTop = headerRect.height + snapshotRect.height + 'px';
+//                    $_snapshot.style.top = headerRect.height + 'px';
+//                } else {
+//                    $_parent.classList.remove('snapshot--fixed');
+//                    $_parent.style.removeProperty('padding-top');
+//                }
+//            }
+        }
+        function monitorWindow() {
+            if (!ticking) {
+                window.requestAnimationFrame(function() {
+                    updateScroll();
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }
+        </script><link rel='stylesheet' id='style-css'  href='/wp-content/themes/slattery-reloaded/style.css?ver=5.2.3' type='text/css' media='all' />
+<script type='text/javascript' src='/wp-includes/js/jquery/jquery.js'></script>
+<script type='text/javascript' src='/wp-content/themes/slattery-reloaded/bin/assets/js/slattery-auctions-2018.min.js?ver=5.2.3'></script>
+<script type='text/javascript' src='/wp-includes/js/wp-embed.min.js?ver=5.2.3'></script>
+<script>
+            var univers45Font = new FontFaceObserver('Univers 45');
+            var univers55Font = new FontFaceObserver('Univers 55');
+            var univers65Font = new FontFaceObserver('Univers 65');
+
+            Promise.all([
+                univers45Font.load(),
+                univers55Font.load(),
+                univers65Font.load(),
+            ]).then(function () {
+                document.documentElement.className += " fonts-loaded";
+            });
+        </script>
+<script type="text/javascript">window.NREUM||(NREUM={});NREUM.info={"beacon":"bam.nr-data.net","licenseKey":"c0cab714b3","applicationID":"281013979","transactionName":"ZAADMkACDEEFUBIIW11KIAVGCg1cS0ADAEZQDUwUVxAXXhBA","queueTime":0,"applicationTime":523,"atts":"SEcARAgYH08=","errorBeacon":"bam.nr-data.net","agent":""}</script></body>
+</html>

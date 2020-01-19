@@ -4,6 +4,7 @@ from selenium import webdriver
 import pandas
 from datetime import datetime
 import re
+import pdb
 
 
 class SubaruSpider(scrapy.Spider):
@@ -41,35 +42,26 @@ class SubaruSpider(scrapy.Spider):
 
         base_url = "https://www.subaru.com.au/used/cars/subaru"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            #base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
+
+
+    def parse_all_pages_urls(self, response):
+        """ Extracts URLs of all pages. """
+        
+        num_pages = 37
+        for current_pagination in range(num_pages):
+            car_range = current_pagination*15
+            base_url = "https://www.subaru.com.au/used/cars?query=Make.subaru.&sort=year&limit=9&skip={}".format(
+                str(car_range))
             yield scrapy.Request(
-                url = base_url, callback = self.parse_all_cars_within_page,
-                meta={"url": base_url})
-
-
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
+                url = base_url, callback = self.parse_all_cars_within_page)
 
 
     def parse_all_cars_within_page(self, response):
         """ Extracts all cars URLs within a page. """
 
-        link = response.meta.get("url")
-        """
+        link = response.url
         driver = webdriver.PhantomJS()
         driver.get(link)
         cars_blocks = driver.find_elements_by_class_name("csnsl__card")
@@ -80,10 +72,6 @@ class SubaruSpider(scrapy.Spider):
         for url in cars_urls:
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "https://www.subaru.com.au/used/details/subaru-wrx-2019/oag-ad-17927345"
-        yield scrapy.Request(
-            url = url, callback = self.parse_car, meta={"url": url})
 
 
     def parse_car(self, response):

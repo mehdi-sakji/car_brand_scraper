@@ -22,6 +22,45 @@ class AudiSpider(scrapy.Spider):
             "BODY": "BODY TYPE", "CO²": "CO2 EMISSIONS", "KMS": "ODOMETER",
             "MODEL YEAR": "YEAR", "FUEL EFFICIENCY": "FUEL ECONOMY", "DRIVE": "DRIVE TYPE",
             "REG PLATE": "REGO", "SEAT CAPACITY": "SEATS", "INDUCTION": "INDUCTION TYPE"}
+        self.models_badges = dict([
+            ("A1", []),
+
+            ("A3", ["30 Tfsi", "35 Tfsi S Line Plus", "35 Tfsi", "40 Tfsi S Line Plus", "40 Tfsi", "Ambition", "Attraction",
+            "S Line", "Sport Black Edition", "Sport Limited Edition", "Sport"]),
+
+            ("A4", ["35 Tfsi", "40 Tfsi", "45 Tfsi", "Allroad 45 Tfsi", "Allroad", "Ambition", "Black Edition", "S Line", "Sport"]),
+
+            ("A5", ["40 Tfsi Sport", "45 Tfsi Sport", "S Line Plus", "Sport"]),
+
+            ("A6", ["45 Tfsi S Line", "45 Tfsi", "55 Tfsi S Line", "Allroad", "Bi-turbo", "Black Edition", "S Line"]),
+
+            ("A7", ["45 Tfsi", "55 Tfsi", "Bi-turbo", "S Line"]),
+
+            ("A8", ["50 Tdi L", "50 Tdi", "55 Tfsi", "L"]),
+
+            ("Q2", ["35 Tfsi Design", "40 Tfsi Sport", "Design", "Sport"]),
+
+            ("Q3", ["Tdi Sport", "Tdi",  "Tfsi Sport", "Tfsi"]),
+            
+            ("Q5", ["40 Tdi Design", "40 Tdi Sport", "45 Tfsi Design", "45 Tfsi Sport Black Edition", "45 Tfsi Sport", 
+            "50 Tdi Sport Black Edition", "50 Tdi Sport", "Tdi Sport Edition", "Tdi Design", "Tdi Sport",  "Tdi",  "Tfsi Sport",
+            "Tfsi"]),
+            ("Q7", ["160kw", "45 Tdi", "50 Tdi Black Edition", "50 Tdi", "Tdi"]),
+            ("Q8", ["55 Tfsi"]),
+            ("R8", ["Aspp First Edition", "Plus"]),
+            ("RS3", []),
+            ("RS4", []),
+            ("RS5", []),
+            ("RS6", ["Performance"]),
+            ("RS7", ["Performance"]),
+            ("S3", ["213kw"]),
+            ("S4", []),
+            ("S5", []),
+            ("SQ5", ["Black Edition", "Tdi"]),
+            ("SQ7", ["Tdi Black Edition", "Tdi Special Edition", "Tdi"]),
+            ("TT", ["45 Tfsi", "S Line", "Sport"]),
+            ("TTS", []),
+        ])
 
 
     def start_requests(self):
@@ -42,15 +81,10 @@ class AudiSpider(scrapy.Spider):
         ss_page = response.css(".ss-page")[0]
         pagination_text = ss_page.css("option::text").extract_first()
         max_pagination = int(pagination_text.split(" ")[-1])
-        test_url = "https://audisearch.com.au/details/497155/2015-audi-s3-sedan"
-        yield scrapy.Request(
-            url = test_url, callback = self.parse_car)
-        """
         for current_pagination in range(max_pagination):
             base_url = "https://audisearch.com.au/listing?page={}".format(str(current_pagination+1))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
-        """
 
 
     def parse_all_cars_within_page(self, response):
@@ -69,11 +103,15 @@ class AudiSpider(scrapy.Spider):
 
         link = response.url
         title = response.css(".cl-heading")[1].css("h1::text").extract_first()
+        subtitle = response.css(".cl-heading")[1].css(".subtitle::text").extract_first()
         initial_details = {
             "TIMESTAMP": int(datetime.timestamp(datetime.now())) , "LINK": link, "MAKE": self.make, "TITLE": title}
         car_model = [item for item in self.models if item in title]
         if len(car_model)>=1:
             initial_details["MODEL"] = car_model[0]
+            car_badge = self.parse_car_badge(subtitle, car_model[0])
+            if car_badge is not None:
+                initial_details["BADGE"] = car_badge
         price = response.css(".car-price")[0].css(".overall-price")[0].css("span::text").extract_first()
         if price is not None:
             initial_details["PRICE"] = price
@@ -126,3 +164,14 @@ class AudiSpider(scrapy.Spider):
         parsed_details_df["value"] =  parsed_details_df["value"].apply(
             lambda value: value.strip() if isinstance(value, str) else value)
         return parsed_details_df
+
+
+    def parse_car_badge(self, title, car_model):
+        """ Recognizes car badge from its title and according to its title. """
+
+        car_badge = None
+        for badge in self.models_badges[car_model]:
+            if badge.lower() in title.lower():
+                car_badge = badge
+                break
+        return car_badge

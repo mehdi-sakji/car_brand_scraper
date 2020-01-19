@@ -30,33 +30,17 @@ class AutoSpider(scrapy.Spider):
         base_url = "http://www.auto-auctions.com.au/search_results.aspx?sitekey=AAV&make=All%20Makes&model=All%20Models&keyword=&fromyear%20=From%20Any&toyear=To%20Any&body=All%20Body%20Types"
         self.init_data()
         yield scrapy.Request(
-            url = base_url, callback = self.parse_all_pages_urls)
-
-    
-    def parse_all_pages_urls(self, response):
-        """ Extracts URLs of all pages. """
-
-        #pagination_text = response.css(".ss-page")[0].css("option::text").extract_first()
-        #max_pagination = int(pagination_text.split(" ")[-1])
-        for page in range(1):
-            page_url = "https://audisearch.com.au/listing?page={}".format(str(page))
-            yield scrapy.Request(
-                url = page_url, callback = self.parse_all_cars_within_page)
+            url = base_url, callback = self.parse_all_cars_within_page)
 
 
     def parse_all_cars_within_page(self, response):
         """ Extracts all cars URLs within a page. """
 
-        #car_blocks = response.css("table")[0].css("tbody")[0].css("tr")
-        #cars_urls = [
-        #    "http://www.auto-auctions.com.au/" + car_block.css("td")[0].css("a::attr(href)").extract_first() for car_block in car_blocks]
-        """
+        car_blocks = response.css("table")[0].css("tbody")[0].css("tr")
+        cars_urls = [
+            "http://www.auto-auctions.com.au/" + car_block.css("td")[0].css("a::attr(href)").extract_first() for car_block in car_blocks]
         for url in cars_urls:
             yield scrapy.Request(
-                url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "http://www.auto-auctions.com.au/cp_veh_inspection_report.aspx?sitekey=AAV&MTA=543077"
-        yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
 
 

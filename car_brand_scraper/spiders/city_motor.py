@@ -32,27 +32,8 @@ class CityMotorSpider(scrapy.Spider):
 
         base_url = "https://www.citymotorauction.com.au/as_stock.aspx?sitekey=CTY&make=All%20Makes&model=All%20Models&keyword=&fromyear%20=From%20Any&toyear=To%20Any&body=All%20Body%20Types"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            #base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
-            yield scrapy.Request(
-                url = base_url, callback = self.parse_all_cars_within_page)
-
-
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_cars_within_page)
 
 
     def parse_all_cars_within_page(self, response):

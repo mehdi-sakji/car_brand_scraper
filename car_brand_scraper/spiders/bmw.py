@@ -3,6 +3,8 @@ import json
 from selenium import webdriver
 from datetime import datetime
 import pandas
+import re
+import pdb
 
 
 class BmwSpider(scrapy.Spider):
@@ -20,32 +22,46 @@ class BmwSpider(scrapy.Spider):
             "CLASS": "SERIES", "COLOUR": "EXTERIOR COLOUR", "REG": "REGO", 
             "REG EXPIRY": "REGO EXPIRY"}
 
-
+    """
     def start_requests(self):
-        """ Browse to the base url the scraper starts from """
 
         base_url = "https://usedcars.bmw.com.au/listing"
         self.init_data()
-        """
+    
         driver = webdriver.PhantomJS()
         driver.get(base_url) 
         self.extract_max_pagination(driver)
         driver.close()
-        """
+        
         self.max_pagination = 1
         for current_pagination in range(self.max_pagination):
             base_url = "https://usedcars.bmw.com.au/listing?page={}".format(
                 str(current_pagination))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
+    """
+
+    def start_requests(self):
+        """ Browse to the base url the scraper starts from. """
+
+    
+        base_url = "https://usedcars.bmw.com.au/listing"
+        self.init_data()
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
 
 
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        n_results_text = driver.find_element_by_class_name("cars-found").text
-        n_results = int(n_results_text.split(" ")[0])
-        self.max_pagination = n_results // 12 + 1
+    def parse_all_pages_urls(self, response):
+        """ Extracts URLs of all pages. """
+        
+        cars_found_text = response.css(".cars-found::text").extract_first()
+        num_results_regex = re.compile(r'\d+')
+        num_results = int(num_results_regex.search(cars_found_text).group())
+        num_pages = int(num_results/12) + 1
+        for current_pagination in range(num_pages):
+            base_url = "https://usedcars.bmw.com.au/listing?page={}".format(str(current_pagination+1))
+            yield scrapy.Request(
+                url = base_url, callback = self.parse_all_cars_within_page)
 
 
     def parse_all_cars_within_page(self, response):
@@ -54,12 +70,8 @@ class BmwSpider(scrapy.Spider):
         cars_blocks = response.css(".car-details")
         cars_urls = [
             car_block.css("a::attr(href)").extract_first() for car_block in cars_blocks]
-        """
         for url in cars_urls:
             yield scrapy.Request(url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "https://usedcars.bmw.com.au/details/2015-bmw-318-i-sport-line/OAG-AD-17687574"
-        yield scrapy.Request(url = url, callback = self.parse_car, meta={"url": url})
 
 
     def parse_car(self, response):

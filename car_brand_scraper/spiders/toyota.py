@@ -3,6 +3,7 @@ import json
 from selenium import webdriver
 import pandas
 from datetime import datetime
+import re
 import pdb
 
 
@@ -37,27 +38,21 @@ class ToyotaSpider(scrapy.Spider):
 
         base_url = "https://www.toyota.com.au/used-cars/for-sale"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            #base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_pages_urls)
+
+
+    def parse_all_pages_urls(self, response):
+        """ Extracts URLs of all pages. """
+        
+        cars_found_text = response.css("#sticky-search-results-header")[0].css("h4::text").extract_first()
+        num_results_regex = re.compile(r'(\d|,)+')
+        num_results = int(num_results_regex.search(cars_found_text).group().replace(",", ""))
+        num_pages = int(num_results/20) + 1
+        for current_pagination in range(num_pages):
+            base_url = "https://www.toyota.com.au/used-cars/for-sale?itemsPerPage=20&page={}&startIndex=&make=&model=&badge=&series=&colour=&body=&odometer.Minimum=&odometer.Maximum=&price.Minimum=&price.Maximum=&year.Minimum=&year.Maximum=&keywords=&driveType=&transmission=&fuelType=&engineSize.Minimum=&engineSize.Maximum=&location=&radius=&doors.Minimum=&doors.Maximum=&seats.Minimum=&seats.Maximum=&cylinders.Minimum=&cylinders.Maximum=&agedNewerThanDays=&agedOlderThanDays=&sorting=MostRelevant|True&receiver-email=&sender-name=&sender-email=".format(str(current_pagination+1))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
-
-
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
 
 
     def parse_all_cars_within_page(self, response):
@@ -66,14 +61,9 @@ class ToyotaSpider(scrapy.Spider):
         car_ids = response.css(".vehicle-item::attr(id)").extract()
         car_ids = [item_id.split("listing")[1] for item_id in car_ids]
         cars_urls = ["/".join(["https://www.toyota.com.au/used-cars/for-sale", item_id]) for item_id in car_ids]
-        """
         for url in cars_urls:
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "https://www.toyota.com.au/used-cars/for-sale/452054"
-        yield scrapy.Request(
-            url = url, callback = self.parse_car, meta={"url": url})
 
 
     def parse_car(self, response):

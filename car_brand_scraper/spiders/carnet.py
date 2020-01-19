@@ -31,27 +31,8 @@ class CarnetSpider(scrapy.Spider):
 
         base_url = "https://www.carnetauctions.com.au/search_results.aspx?sitekey=All%20Locations&make=All%20Makes&model=All%20Models&keyword%20=&fromyear=From%20Any&toyear=To%20Any&body=All%20Body%20Types"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            #base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
-            yield scrapy.Request(
-                url = base_url, callback = self.parse_all_cars_within_page)
-
-
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_cars_within_page)
 
 
     def parse_all_cars_within_page(self, response):
@@ -60,12 +41,9 @@ class CarnetSpider(scrapy.Spider):
         car_blocks = response.css(".result-item")
         cars_urls = [
             "https://www.carnetauctions.com.au/" + car_block.css("a::attr(href)").extract_first() for car_block in car_blocks]
-        """
         for url in cars_urls:
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "https://www.carnetauctions.com.au/cp_veh_inspection_report.aspx?sitekey=CSS&MTA=148303&/2008-AUDI-A4-2.0-B7-BLACK-CVT-MULTITRONIC-4D-SEDAN"
         yield scrapy.Request(
             url = url, callback = self.parse_car, meta={"url": url})
     

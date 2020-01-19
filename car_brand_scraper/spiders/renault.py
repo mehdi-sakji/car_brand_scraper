@@ -39,7 +39,6 @@ class RenaultSpider(scrapy.Spider):
 
     def start_requests(self):
         """ Browse to the base url the scraper starts from. """
-
     
         base_url = "http://approvedused.renault.com.au/search/all/all"
         self.init_data()
@@ -50,42 +49,31 @@ class RenaultSpider(scrapy.Spider):
     def parse_all_pages_urls(self, response):
         """ Browse to the base url the scraper starts from. """
 
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
+        num_results_text = response.css(".results-heading")[0].css("span::text").extract_first()
+        num_results = int(num_results_text) 
+        num_pages = int(num_results/15) + 1
+        for current_pagination in range(num_pages):
+            car_range = current_pagination*15
+            base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(car_range))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
 
 
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
-
-
     def parse_all_cars_within_page(self, response):
-        """ Extracts all cars URLs within a page. """
+        """ TODO """
 
         cars_search = response.css(".results")
         cars_urls = cars_search.css("a::attr(href)").extract()
         cars_urls = ['http://approvedused.renault.com.au' + url for url in cars_urls if url != '#pop-up']
         cars_urls = list(set(cars_urls))
-        """
         for url in cars_urls:
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "http://approvedused.renault.com.au/details/2019-renault-captur-zen-auto/OAG-AD-17633153"
-        yield scrapy.Request(
-            url = url, callback = self.parse_car, meta={"url": url})
 
 
     def parse_car(self, response):
-        """ Extracts one car's information. """
-
+        """ TODO """
+    
         link = response.meta.get("url")
         title = response.css("h1::text").extract()[1]
         year = title.split(" ")[0]

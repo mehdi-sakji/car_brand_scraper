@@ -64,13 +64,13 @@ DOWNLOADER_MIDDLEWARES = {
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-ITEM_PIPELINES = {
-    'scrapy.pipelines.images.ImagesPipeline': 1,
-}
+#ITEM_PIPELINES = {
+#    'scrapy.pipelines.images.ImagesPipeline': 1,
+#}
 #ITEM_PIPELINES = {
 #    'car_brand_scraper.pipelines.CarBrandScraperPipeline': 300,
 #}
-IMAGES_STORE = 'images'
+#IMAGES_STORE = 'images'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html
@@ -94,4 +94,4 @@ IMAGES_STORE = 'images'
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 LOG_LEVEL = "INFO"
-
+DOWNLOAD_DELAY= 10
