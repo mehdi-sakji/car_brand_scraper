@@ -4,6 +4,10 @@ from selenium import webdriver
 import pandas
 from datetime import datetime
 import pdb
+import pymongo
+from env import MONGODB_CONNECTION, MONGODB_COLLECTION
+from bson import json_util
+import json
 
 
 class AudiSpider(scrapy.Spider):
@@ -16,6 +20,9 @@ class AudiSpider(scrapy.Spider):
     def init_data(self):
         """ Initiates global settings. """
 
+        self.mongo_client = pymongo.MongoClient(MONGODB_CONNECTION)
+        self.db = self.mongo_client.cardealer709
+        self.collection = self.db[MONGODB_COLLECTION]
         self.make = "Audi"
         self.details_mapping = {
             "VEHICLE": "TITLE", "COLOUR": "EXTERIOR COLOUR", "STOCK #": "STOCK NO",
@@ -137,6 +144,7 @@ class AudiSpider(scrapy.Spider):
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")
         parsed_details = dict(zip(tmp_dict["key"], tmp_dict["value"]))
+        self.collection.insert_one(json.loads(json_util.dumps(parsed_details)))
         yield parsed_details
 
 
