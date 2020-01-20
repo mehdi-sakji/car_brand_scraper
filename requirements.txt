@@ -1,0 +1,4 @@
+guppy==0.1.10
+selenium==3.141.0
+pymongo==3.10.1
+pandas==0.24.2
