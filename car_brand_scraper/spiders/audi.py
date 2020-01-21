@@ -88,7 +88,8 @@ class AudiSpider(scrapy.Spider):
         ss_page = response.css(".ss-page")[0]
         pagination_text = ss_page.css("option::text").extract_first()
         max_pagination = int(pagination_text.split(" ")[-1])
-        for current_pagination in range(max_pagination):
+        #for current_pagination in range(max_pagination):
+        for current_pagination in range(1):
             base_url = "https://audisearch.com.au/listing?page={}".format(str(current_pagination+1))
             yield scrapy.Request(
                 url = base_url, callback = self.parse_all_cars_within_page)
@@ -144,7 +145,10 @@ class AudiSpider(scrapy.Spider):
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")
         parsed_details = dict(zip(tmp_dict["key"], tmp_dict["value"]))
-        self.collection.insert_one(json.loads(json_util.dumps(parsed_details)))
+        parsed_details = json.loads(json_util.dumps(parsed_details))
+        parsed_details["_id"] = parsed_details["LINK"]
+        query = {"_id": parsed_details["_id"]}
+        self.collection.update(query, parsed_details, upsert=True)
         yield parsed_details
 
 
