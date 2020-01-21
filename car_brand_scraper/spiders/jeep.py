@@ -6,7 +6,10 @@ from datetime import datetime
 from selenium.webdriver.firefox.options import Options
 import time
 import re
-import pdb
+import pymongo
+from env import MONGODB_CONNECTION, MONGODB_COLLECTION
+from bson import json_util
+import json
 
 
 class JeepSpider(scrapy.Spider):
@@ -19,6 +22,9 @@ class JeepSpider(scrapy.Spider):
     def init_data(self):
         """ Initiates global settings. """
 
+        self.mongo_client = pymongo.MongoClient(MONGODB_CONNECTION)
+        self.db = self.mongo_client.cardealer709
+        self.collection = self.db[MONGODB_COLLECTION]
         self.make = "Jeep"
         self.details_mapping = {
             "KILOMETRES": "ODOMETER",
@@ -121,6 +127,10 @@ class JeepSpider(scrapy.Spider):
             if item in parsed_details['TITLE'].upper():
                 parsed_details['MODEL'] = item
                 break
+        parsed_details = json.loads(json_util.dumps(parsed_details))
+        parsed_details["_id"] = parsed_details["LINK"]
+        query = {"_id": parsed_details["_id"]}
+        self.collection.update(query, parsed_details, upsert=True)
         yield parsed_details
 
 
