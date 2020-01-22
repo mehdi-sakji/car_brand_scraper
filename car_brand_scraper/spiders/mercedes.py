@@ -8,6 +8,7 @@ import pymongo
 from env import MONGODB_CONNECTION, MONGODB_COLLECTION
 from bson import json_util
 import json
+import pdb
 
 
 class MercedesSpider(scrapy.Spider):
@@ -68,7 +69,10 @@ class MercedesSpider(scrapy.Spider):
         """ Extracts one car's information. """
 
         link = response.meta.get("url")
-        title = response.css(".flex-grow")[0].css("h1::text").extract_first()
+        try:
+            title = response.css(".flex-grow")[0].css("h1::text").extract_first()
+        except IndexError:
+            title = response.css(".flex")[0].css("h1::text").extract_first()
         price = response.css(".overall-price")[0].css("span::text").extract_first()
         fuel_economy = response.css(".feature-consumption *::text").extract_first()
         initial_details = {
@@ -90,7 +94,10 @@ class MercedesSpider(scrapy.Spider):
             features_list += features
         if len(features_list)>=1:
             initial_details["VEHICLE FEATURES"] = ",".join(features_list)
-        details = response.css(".vehicle-details")[0].css("li")
+        try:
+            details = response.css(".vehicle-details")[0].css("li")
+        except:
+            details = response.css(".details")[0].css("li")
         parsed_details_df = self.parse_details(details, initial_details)
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")

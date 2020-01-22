@@ -72,7 +72,6 @@ class AudiSpider(scrapy.Spider):
 
     def start_requests(self):
         """ Browse to the base url the scraper starts from. """
-
     
         base_url = "https://audisearch.com.au/listing"
         self.init_data()
@@ -127,10 +126,7 @@ class AudiSpider(scrapy.Spider):
         comments_paragraphs = comments.css("p::text").extract()
         if comments_paragraphs is not None and len(comments_paragraphs)>=1:
             initial_details["COMMENTS"] = " ".join(comments_paragraphs)
-        dealer_info = response.css(".dealer-info"parsed_details = json.loads(json_util.dumps(parsed_details))
-        parsed_details["_id"] = parsed_details["LINK"]
-        query = {"_id": parsed_details["_id"]}
-        self.collection.update(query, parsed_details, upsert=True))
+        dealer_info = response.css(".dealer-info")
         dealer_name = dealer_info.css("h3::text").extract_first()
         if dealer_name is not None:
             initial_details["DEALER NAME"] = dealer_name
@@ -141,10 +137,7 @@ class AudiSpider(scrapy.Spider):
         features_list = vehicle_details_features_and_comments.css(".standard-features")[0].css(
             "li::text").extract()
         if features_list is not None and len(features_list)>=1:
-            initial_details["VEHICLE FEATURES"] =parsed_details = json.loads(json_util.dumps(parsed_details))
-        parsed_details["_id"] = parsed_details["LINK"]
-        query = {"_id": parsed_details["_id"]}
-        self.collection.update(query, parsed_details, upsert=True) ",".join(features_list)
+            initial_details["VEHICLE FEATURES"] = ",".join(features_list)
         details = vehicle_details_features_and_comments.xpath("./div")[0].css(".tab-content").css("li")
         parsed_details_df = self.parse_details(details, initial_details)
         parsed_details_df = self.alter_details(parsed_details_df)

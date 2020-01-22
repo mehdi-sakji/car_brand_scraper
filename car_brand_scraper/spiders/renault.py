@@ -10,7 +10,9 @@ import json
 
 
 class RenaultSpider(scrapy.Spider):
-    """ Spider for scraping Renault cars. """
+    """
+    Spider for scraping Renault data.
+    """
 
 
     name = "renault"
