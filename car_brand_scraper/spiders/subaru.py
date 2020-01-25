@@ -1,6 +1,8 @@
 import scrapy
 import json
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 import pandas
 from datetime import datetime
 import re
@@ -8,6 +10,7 @@ import pymongo
 from env import MONGODB_CONNECTION, MONGODB_COLLECTION
 from bson import json_util
 import json
+import pdb
 
 
 class SubaruSpider(scrapy.Spider):
@@ -57,7 +60,8 @@ class SubaruSpider(scrapy.Spider):
         
         num_pages = 37
         for current_pagination in range(num_pages):
-            car_range = current_pagination*15
+            print(current_pagination)
+            car_range = current_pagination*9
             base_url = "https://www.subaru.com.au/used/cars?query=Make.subaru.&sort=year&limit=9&skip={}".format(
                 str(car_range))
             yield scrapy.Request(
@@ -68,7 +72,10 @@ class SubaruSpider(scrapy.Spider):
         """ Extracts all cars URLs within a page. """
 
         link = response.url
-        driver = webdriver.PhantomJS()
+        options = Options()
+        options.add_argument('--headless')
+        executable_path = "/home/saronida/lib/geckodriver"
+        driver = webdriver.Firefox(executable_path=executable_path, options=options)
         driver.get(link)
         cars_blocks = driver.find_elements_by_class_name("csnsl__card")
         cars_urls = [
@@ -82,7 +89,6 @@ class SubaruSpider(scrapy.Spider):
 
     def parse_car(self, response):
         """ Extracts one car's information. """
-
         link = response.meta.get("url")
         stock_details = response.css(".stock-details__aside")
         title = stock_details.css(".csnsl__vehicle-heading::text").extract_first()

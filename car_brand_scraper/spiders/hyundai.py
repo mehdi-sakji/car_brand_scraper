@@ -2,6 +2,7 @@ import scrapy
 import json
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 import pandas
 from datetime import datetime
 import re
@@ -9,6 +10,7 @@ import pymongo
 from env import MONGODB_CONNECTION, MONGODB_COLLECTION
 from bson import json_util
 import json
+import pdb
 
 
 class HyundaiSpider(scrapy.Spider):
@@ -89,14 +91,20 @@ class HyundaiSpider(scrapy.Spider):
         initial_details["DEALER NAME"] = dealer_name
         location = dealer_summary_content.css("p::text").extract_first()
         initial_details["LOCATION"] = location
-        driver = webdriver.PhantomJS()
+        options = Options()
+        options.add_argument('--headless')
+        executable_path = "/home/saronida/lib/geckodriver"
+        driver = webdriver.Firefox(executable_path=executable_path, options=options)
         driver.get(link)
         input_postcode = driver.find_element_by_name("userpostcode")
         input_postcode.send_keys("2148")
         input_postcode.send_keys(Keys.ENTER)
-        price = driver.find_element_by_class_name("pricing_container").find_element_by_class_name("price_value").text
-        if price is not None:
+        try:
+            price = driver.find_elements_by_class_name("pricing_container")[0].find_element_by_class_name(
+                "price_value").text
             initial_details["PRICE"] = price
+        except:
+            pass
         driver.close()
         features = response.css("#vehicle-features")[0].css("td::text").extract()
         initial_details["VEHICLE FEATURES"] = ",".join(features)

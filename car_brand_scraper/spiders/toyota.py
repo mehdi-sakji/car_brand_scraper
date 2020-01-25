@@ -8,6 +8,7 @@ import pymongo
 from env import MONGODB_CONNECTION, MONGODB_COLLECTION
 from bson import json_util
 import json
+import pdb
 
 
 class ToyotaSpider(scrapy.Spider):
