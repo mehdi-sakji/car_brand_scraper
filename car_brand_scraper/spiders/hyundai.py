@@ -2,9 +2,14 @@ import scrapy
 import json
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 import pandas
 from datetime import datetime
 import re
+import pymongo
+from env import MONGODB_CONNECTION, MONGODB_COLLECTION
+from bson import json_util
+import json
 import pdb
 
 
@@ -18,6 +23,9 @@ class HyundaiSpider(scrapy.Spider):
     def init_data(self):
         """ Initiates global settings. """
 
+        self.mongo_client = pymongo.MongoClient(MONGODB_CONNECTION)
+        self.db = self.mongo_client.cardealer709
+        self.collection = self.db[MONGODB_COLLECTION]
         self.make = "Hyundai"
         self.models = ["Accent"]
         self.details_mapping = {
@@ -83,14 +91,20 @@ class HyundaiSpider(scrapy.Spider):
         initial_details["DEALER NAME"] = dealer_name
         location = dealer_summary_content.css("p::text").extract_first()
         initial_details["LOCATION"] = location
-        driver = webdriver.PhantomJS()
+        options = Options()
+        options.add_argument('--headless')
+        executable_path = "/home/saronida/lib/geckodriver"
+        driver = webdriver.Firefox(executable_path=executable_path, options=options)
         driver.get(link)
         input_postcode = driver.find_element_by_name("userpostcode")
         input_postcode.send_keys("2148")
         input_postcode.send_keys(Keys.ENTER)
-        price = driver.find_element_by_class_name("pricing_container").find_element_by_class_name("price_value").text
-        if price is not None:
+        try:
+            price = driver.find_elements_by_class_name("pricing_container")[0].find_element_by_class_name(
+                "price_value").text
             initial_details["PRICE"] = price
+        except:
+            pass
         driver.close()
         features = response.css("#vehicle-features")[0].css("td::text").extract()
         initial_details["VEHICLE FEATURES"] = ",".join(features)
@@ -99,6 +113,10 @@ class HyundaiSpider(scrapy.Spider):
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")
         parsed_details = dict(zip(tmp_dict["key"], tmp_dict["value"]))
+        parsed_details = json.loads(json_util.dumps(parsed_details))
+        parsed_details["_id"] = parsed_details["LINK"]
+        query = {"_id": parsed_details["_id"]}
+        self.collection.update(query, parsed_details, upsert=True)
         yield parsed_details
 
 

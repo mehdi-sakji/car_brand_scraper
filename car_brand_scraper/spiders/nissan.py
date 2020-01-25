@@ -1,8 +1,16 @@
 import scrapy
 import json
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 from datetime import datetime
 import pandas
+import pymongo
+from env import MONGODB_CONNECTION, MONGODB_COLLECTION
+from bson import json_util
+import re
+import time
+import pdb
 
 
 class NissanSpider(scrapy.Spider):
@@ -15,6 +23,9 @@ class NissanSpider(scrapy.Spider):
     def init_data(self):
         """ Initiates global settings. """
 
+        self.mongo_client = pymongo.MongoClient(MONGODB_CONNECTION)
+        self.db = self.mongo_client.cardealer709
+        self.collection = self.db[MONGODB_COLLECTION]
         self.make = "Nissan"
         self.details_mapping = {
             "COLOUR": "EXTERIOR COLOUR",
@@ -23,46 +34,39 @@ class NissanSpider(scrapy.Spider):
 
     def start_requests(self):
         """ Browse to the base url the scraper starts from. """
-
+    
         base_url = "https://pre-owned.nissan.com.au/listing"
         self.init_data()
-        """
-        driver = webdriver.PhantomJS()
-        driver.get(base_url) 
-        self.extract_max_pagination(driver)
-        driver.close()
-        print(self.max_pagination)
-        """
-        self.max_pagination = 1
-        for current_pagination in range(self.max_pagination):
-            #base_url = "http://approvedused.renault.com.au/search/all/all?s={}".format(str(current_pagination))
-            yield scrapy.Request(
-                url = base_url, callback = self.parse_all_cars_within_page)
+        yield scrapy.Request(
+            url = base_url, callback = self.parse_all_cars_urls)
 
 
-    def extract_max_pagination(self, driver):
-        """ Extracts the number of max paginations. """
-
-        ss_page = driver.find_element_by_class_name("ss-page")
-        pagination_text = ss_page.find_element_by_tag_name("option").text
-        self.max_pagination = int(pagination_text.split(" ")[-1])
-        return 1
-
-
-    def parse_all_cars_within_page(self, response):
-        """ Extracts all cars URLs within a page. """
-
-        cars_blocks = response.css(".car-list")
+    def parse_all_cars_urls(self, response):
+        """ Extracts URLs of all pages. """
+        
+        cars_found_text = response.css(".cars-found::text").extract_first()
+        num_results_regex = re.compile(r'\d+')
+        num_results = int(num_results_regex.search(cars_found_text).group())
+        options = Options()
+        options.add_argument('--headless')
+        executable_path = "/home/saronida/lib/geckodriver"
+        driver = webdriver.Firefox(executable_path=executable_path, options=options)
+        driver.get(response.url)
+        n_iterations = int((num_results - 30)/30) + 1
+        for i in range(n_iterations):
+            try:
+                print("pagination {}".format(str(i)))
+                driver.find_element_by_id("load-more").click()
+                time.sleep(10)
+            except:
+                break
+        car_blocks = driver.find_elements_by_class_name("car-list")
         cars_urls = [
-            car_block.css("a::attr(href)").extract_first() for car_block in cars_blocks]
-        """
+            car_block.find_element_by_tag_name("a").get_attribute("href") for car_block in car_blocks]
+        driver.close()
         for url in cars_urls:
             yield scrapy.Request(
                 url = url, callback = self.parse_car, meta={"url": url})
-        """
-        url = "https://pre-owned.nissan.com.au/details/2016-nissan-juke/OAG-AD-18177267"
-        yield scrapy.Request(
-            url = url, callback = self.parse_car, meta={"url": url})
 
 
     def parse_car(self, response):
@@ -95,6 +99,10 @@ class NissanSpider(scrapy.Spider):
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")
         parsed_details = dict(zip(tmp_dict["key"], tmp_dict["value"]))
+        parsed_details = json.loads(json_util.dumps(parsed_details))
+        parsed_details["_id"] = parsed_details["LINK"]
+        query = {"_id": parsed_details["_id"]}
+        self.collection.update(query, parsed_details, upsert=True)
         yield parsed_details
 
 

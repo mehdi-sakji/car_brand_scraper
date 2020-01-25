@@ -2,7 +2,10 @@ import scrapy
 import json
 import pandas
 from datetime import datetime
-import pdb
+import pymongo
+from env import MONGODB_CONNECTION, MONGODB_COLLECTION
+from bson import json_util
+import json
 
 
 class CarnetSpider(scrapy.Spider):
@@ -15,6 +18,9 @@ class CarnetSpider(scrapy.Spider):
     def init_data(self):
         """ Initiates global settings. """
 
+        self.mongo_client = pymongo.MongoClient(MONGODB_CONNECTION)
+        self.db = self.mongo_client.cardealer709
+        self.collection = self.db[MONGODB_COLLECTION]
         self.details_mapping = {
             "VARIANT": "BADGE",
             "BODY STYLE": "BODY TYPE",
@@ -71,6 +77,10 @@ class CarnetSpider(scrapy.Spider):
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")
         parsed_details = dict(zip(tmp_dict["key"], tmp_dict["value"]))
+        parsed_details = json.loads(json_util.dumps(parsed_details))
+        parsed_details["_id"] = parsed_details["LINK"]
+        query = {"_id": parsed_details["_id"]}
+        self.collection.update(query, parsed_details, upsert=True)
         yield parsed_details
 
 

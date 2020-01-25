@@ -1,9 +1,15 @@
 import scrapy
 import json
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.options import Options
 import pandas
 from datetime import datetime
 import re
+import pymongo
+from env import MONGODB_CONNECTION, MONGODB_COLLECTION
+from bson import json_util
+import json
 import pdb
 
 
@@ -17,6 +23,9 @@ class SubaruSpider(scrapy.Spider):
     def init_data(self):
         """ Initiates global settings. """
 
+        self.mongo_client = pymongo.MongoClient(MONGODB_CONNECTION)
+        self.db = self.mongo_client.cardealer709
+        self.collection = self.db[MONGODB_COLLECTION]
         self.make = "Subaru"
         self.details_mapping = {
             "COLOUR": "EXTERIOR COLOUR",
@@ -51,7 +60,8 @@ class SubaruSpider(scrapy.Spider):
         
         num_pages = 37
         for current_pagination in range(num_pages):
-            car_range = current_pagination*15
+            print(current_pagination)
+            car_range = current_pagination*9
             base_url = "https://www.subaru.com.au/used/cars?query=Make.subaru.&sort=year&limit=9&skip={}".format(
                 str(car_range))
             yield scrapy.Request(
@@ -62,7 +72,10 @@ class SubaruSpider(scrapy.Spider):
         """ Extracts all cars URLs within a page. """
 
         link = response.url
-        driver = webdriver.PhantomJS()
+        options = Options()
+        options.add_argument('--headless')
+        executable_path = "/home/saronida/lib/geckodriver"
+        driver = webdriver.Firefox(executable_path=executable_path, options=options)
         driver.get(link)
         cars_blocks = driver.find_elements_by_class_name("csnsl__card")
         cars_urls = [
@@ -76,7 +89,6 @@ class SubaruSpider(scrapy.Spider):
 
     def parse_car(self, response):
         """ Extracts one car's information. """
-
         link = response.meta.get("url")
         stock_details = response.css(".stock-details__aside")
         title = stock_details.css(".csnsl__vehicle-heading::text").extract_first()
@@ -109,6 +121,10 @@ class SubaruSpider(scrapy.Spider):
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")
         parsed_details = dict(zip(tmp_dict["key"], tmp_dict["value"]))
+        parsed_details = json.loads(json_util.dumps(parsed_details))
+        parsed_details["_id"] = parsed_details["LINK"]
+        query = {"_id": parsed_details["_id"]}
+        self.collection.update(query, parsed_details, upsert=True)
         yield parsed_details
 
 

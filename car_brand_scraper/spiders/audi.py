@@ -72,7 +72,6 @@ class AudiSpider(scrapy.Spider):
 
     def start_requests(self):
         """ Browse to the base url the scraper starts from. """
-
     
         base_url = "https://audisearch.com.au/listing"
         self.init_data()
@@ -144,7 +143,10 @@ class AudiSpider(scrapy.Spider):
         parsed_details_df = self.alter_details(parsed_details_df)
         tmp_dict = parsed_details_df.to_dict(orient="list")
         parsed_details = dict(zip(tmp_dict["key"], tmp_dict["value"]))
-        self.collection.insert_one(json.loads(json_util.dumps(parsed_details)))
+        parsed_details = json.loads(json_util.dumps(parsed_details))
+        parsed_details["_id"] = parsed_details["LINK"]
+        query = {"_id": parsed_details["_id"]}
+        self.collection.update(query, parsed_details, upsert=True)
         yield parsed_details
 
 
