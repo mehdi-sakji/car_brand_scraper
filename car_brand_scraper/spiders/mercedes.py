@@ -5,10 +5,9 @@ import pandas
 from datetime import datetime
 import re
 import pymongo
-from env import MONGODB_CONNECTION, MONGODB_COLLECTION
 from bson import json_util
 import json
-import pdb
+from scrapy.utils.project import get_project_settings
 
 
 class MercedesSpider(scrapy.Spider):
@@ -21,8 +20,13 @@ class MercedesSpider(scrapy.Spider):
     def init_data(self):
         """ Initiates global settings. """
 
+        settings=get_project_settings()
+        MONGODB_CONNECTION = settings.get('MONGODB_CONNECTION')
         self.mongo_client = pymongo.MongoClient(MONGODB_CONNECTION)
+
         self.db = self.mongo_client.cardealer709
+
+        MONGODB_COLLECTION = settings.get('MONGODB_COLLECTION')
         self.collection = self.db[MONGODB_COLLECTION]
         self.make = "Mercedes"
         self.details_mapping = {

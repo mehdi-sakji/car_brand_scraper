@@ -95,3 +95,6 @@ DOWNLOADER_MIDDLEWARES = {
 
 LOG_LEVEL = "INFO"
 DOWNLOAD_DELAY= 10
+
+MONGODB_COLLECTION = "carDealerData"
+MONGODB_CONNECTION = "mongodb+srv://cardealers709:cardealers709@cardealers709-vakta.mongodb.net/test?retryWrites=true&w=majority"
